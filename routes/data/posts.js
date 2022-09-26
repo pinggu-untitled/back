@@ -30,6 +30,7 @@ export async function getById(conn, postId) {
 }
 
 export async function create(conn, post, mentions, hashtags, images) {
+  console.log('######################');
   const newPost = await conn
     .execute(
       `INSERT into POST (user, title, content, longitude, latitude, is_private) values (${USER_NUMBER}, ?, ?, ?, ?, ?)`,
@@ -61,7 +62,7 @@ export async function create(conn, post, mentions, hashtags, images) {
       Number(mention.receiver),
     ]);
   }
-  if (images) {
+  if (images.length !== 0) {
     images.map(async (image) => {
       await fileRepository.create(conn, image, newPost.id);
     });
