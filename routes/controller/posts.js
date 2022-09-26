@@ -1,10 +1,5 @@
 import { db } from '../../config/mysql.js';
-import {
-  postRepository,
-  likeRepository,
-  commentRepository,
-  fileRepository,
-} from '../data/index.js';
+import { postRepository, likeRepository, commentRepository, fileRepository } from '../data/index.js';
 
 export const rand = (start, end) => {
   return Math.floor(Math.random() * (end - start + 1)) + start;
@@ -29,7 +24,7 @@ export async function getPosts(req, res, next) {
     /**
      * infinite scroll return
      */
-    const data = await postRepository.getAll(conn);
+    const data = await postRepository.getFollwing(conn);
     const totalCount = data.length;
     const totalPages = Math.round(totalCount / size);
 
@@ -66,13 +61,7 @@ export async function getPost(req, res, next) {
   const conn = await db.getConnection();
   try {
     const result = {};
-    [
-      result.post,
-      result.likers,
-      result.parentComments,
-      result.childComments,
-      result.files,
-    ] = await Promise.all([
+    [result.post, result.likers, result.parentComments, result.childComments, result.files] = await Promise.all([
       postRepository.getById(conn, postId),
       likeRepository.getAll(conn, postId),
       commentRepository.getParentComments(conn, postId),
@@ -107,38 +96,18 @@ export async function getPost(req, res, next) {
 }
 
 function getBody(string) {
-  const stringData = JSON.stringify(string)
-    .replaceAll(' ', '')
-    .split(`\\n`)
-    .join('')
-    .split('\\')
-    .join('');
-  const { post, mentions, hashtags } = JSON.parse(
-    stringData.substring(1, stringData.length - 1)
-  );
+  const stringData = JSON.stringify(string).replaceAll(' ', '').split(`\\n`).join('').split('\\').join('');
+  const { post, mentions, hashtags } = JSON.parse(stringData.substring(1, stringData.length - 1));
   return { post, mentions, hashtags };
 }
 
 export async function createPost(req, res, next) {
-  const files = req.files;
-  console.log('hello');
-  // const stringData = JSON.stringify(req.body.data)
-  //   .replaceAll(' ', '')
-  //   .split(`\\n`)
-  //   .join('')
-  //   .split('\\')
-  //   .join('');
-  // const { post, mentions, hashtags } = JSON.parse(
-  //   stringData.substring(1, stringData.length - 1)
-  // );
-  const { post, mentions, hashtags } = files
-    ? getBody(req.body.data)
-    : req.body;
+  const { post, mentions, hashtags, images } = req.body;
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
     const newPost = await postRepository
-      .create(conn, post, mentions, hashtags, files)
+      .create(conn, post, mentions, hashtags, images)
       .then((result) => result)
       .catch(console.error);
 
@@ -150,6 +119,24 @@ export async function createPost(req, res, next) {
   } finally {
     conn.release();
   }
+}
+
+// export async function createMedia(req, res, next) {
+//   const { postId } = req.data;
+//   const { files } = req.files;
+//   const conn = await db.getConnection();
+//   try {
+//     await postRepository.createMedia(conn, files, postId);
+//     return res.status(201).json({ message: 'success' });
+//   } catch (err) {
+//     return res.status(500).json(err);
+//   } finally {
+//     conn.release();
+//   }
+// }
+export async function createMedia(req, res, next) {
+  const { files } = req.files;
+  return res.status(200).json(files.map((el) => el.filename));
 }
 
 // export async function createPostWithMedia(req, res, next) {
@@ -177,13 +164,7 @@ export async function updatePost(req, res, next) {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
-    const updatePost = await postRepository.update(
-      conn,
-      post,
-      mentions,
-      hashtags,
-      req.params.postId
-    );
+    const updatePost = await postRepository.update(conn, post, mentions, hashtags, req.params.postId);
 
     await conn.commit();
     return res.status(201).json(updatePost);

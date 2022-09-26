@@ -7,18 +7,15 @@ import {
   updatePostValidator,
 } from '../middlewares/validator.js';
 import { postsController, commentController, likedController } from '../controller/index.js';
-import { upload } from '../upload.js';
+import { upload } from '../middlewares/upload.js';
 
 const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
 
-postsRouter.post(
-  '/',
-  upload.array('images'),
-  // createPostValidator,
-  postsController.createPost,
-);
+postsRouter.post('/', createPostValidator, postsController.createPost);
+
+postsRouter.post('/images', upload.array('images'), postsController.createMedia);
 postsRouter.get('/:postId', postsController.getPost);
 postsRouter.patch(
   '/:postId', //
