@@ -13,7 +13,7 @@ const day = date.getDate();
 
 const currentTime = new Date(year, month, day, 9);
 
-const time = {
+export const time = {
   year: currentTime.getFullYear(),
   month: currentTime.getMonth() + 1,
   date: currentTime.getDate(),
