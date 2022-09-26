@@ -37,7 +37,7 @@ if (prod) {
     cors({
       origin: 'http://localhost:3000',
       credentials: true,
-    })
+    }),
   );
 }
 
@@ -75,8 +75,6 @@ app.get('*', (req, res, next) => {
   return res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-app.listen(app.get('PORT'), () =>
-  console.log(`✅ Express 서버 구동 중 http://localhost:${app.get('PORT')}`)
-);
+app.listen(app.get('PORT'), () => console.log(`✅ Express 서버 구동 중 http://localhost:${app.get('PORT')}`));
 
 // webSocket(server, app)
