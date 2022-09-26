@@ -61,13 +61,12 @@ if (prod) {
   sessionOption.cookie.proxy = true;
 }
 
-app.use(session(sessionOption));
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(session(sessionOption));
+// app.use(passport.initialize());
+// app.use(passport.session());
 
-app.use("/", apiRouter); //api 주소가 아닌 경우, react 가 구동되는 index.html 파일로 이동
+app.use("/", apiRouter);
 
-// 에러 처리 미들웨어
 app.use((err, req, res, next) => {
   return res.send(err);
 });
