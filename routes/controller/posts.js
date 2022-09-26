@@ -104,11 +104,12 @@ function getBody(string) {
 export async function createPost(req, res, next) {
   // { post.title, post.content, post.longitude, post.latitude, post.is_private } = req.body;
 
-  const {
-    post: { title, content, longitude, latitude, is_private },
-  } = req.body;
+  console.log(req.body);
+  const { title, content, longitude, latitude, is_private } = req.body;
   const { mentions, hashtags, images } = req.body;
-  console.log(req.body, '!@#!@#!@#!@#!#@');
+  const post = { title, content, longitude, latitude };
+  console.log(post, 'posts!!!!!!!');
+  console.log(mentions, hashtags, '@@@@@@@@@@@@@');
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
@@ -141,8 +142,8 @@ export async function createPost(req, res, next) {
 //   }
 // }
 export async function createMedia(req, res, next) {
-  // const { files } = req.files;
-  return res.status(200).json(files.map((el) => el.filename));
+  const images = req.files;
+  return res.status(200).json(images.map((el) => el.filename));
 }
 
 // export async function createPostWithMedia(req, res, next) {
