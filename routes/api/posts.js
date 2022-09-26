@@ -5,12 +5,8 @@ import {
   createPostValidator,
   updateCommentValidator,
   updatePostValidator,
-} from '../validator.js';
-import {
-  postsController,
-  commentController,
-  likedController,
-} from '../controller/index.js';
+} from '../middlewares/validator.js';
+import { postsController, commentController, likedController } from '../controller/index.js';
 import { upload } from '../upload.js';
 
 const postsRouter = express.Router();
@@ -21,13 +17,13 @@ postsRouter.post(
   '/',
   upload.array('images'),
   // createPostValidator,
-  postsController.createPost
+  postsController.createPost,
 );
 postsRouter.get('/:postId', postsController.getPost);
 postsRouter.patch(
   '/:postId', //
   // updatePostValidator,
-  postsController.updatePost
+  postsController.updatePost,
 );
 postsRouter.delete('/:postId', postsController.removePost);
 
@@ -36,17 +32,10 @@ postsRouter.post(
   '/:postId/comments',
   // upload.array('files'),
   createCommentValidator,
-  commentController.createComment
+  commentController.createComment,
 );
-postsRouter.patch(
-  '/:postId/comments/:commentId',
-  updateCommentValidator,
-  commentController.updateComment
-);
-postsRouter.delete(
-  '/:postId/comments/:commentId',
-  commentController.removeComment
-);
+postsRouter.patch('/:postId/comments/:commentId', updateCommentValidator, commentController.updateComment);
+postsRouter.delete('/:postId/comments/:commentId', commentController.removeComment);
 
 postsRouter.get('/:postId/liked', likedController.getLiked);
 postsRouter.post('/:postId/liked', likedController.createLiked);
