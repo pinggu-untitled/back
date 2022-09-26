@@ -13,6 +13,8 @@ dotenv.config();
 import db from './models/index.js';
 import passportConfig from './passport/index.js';
 import apiRouter from './routes/api/index.js';
+import { makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
+import { time } from './routes/middlewares/upload.js';
 // const webSocket = require("./socket");
 
 const app = express();
@@ -78,3 +80,6 @@ app.get('*', (req, res, next) => {
 app.listen(app.get('PORT'), () => console.log(`✅ Express 서버 구동 중 http://localhost:${app.get('PORT')}`));
 
 // webSocket(server, app)
+
+makeFolder(`./uploads/images/${time.year}/${time.month}/${time.date}`);
+makeFolderScheduler();
