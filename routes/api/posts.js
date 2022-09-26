@@ -13,7 +13,12 @@ const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
 
-postsRouter.post('/', createPostValidator, postsController.createPost);
+postsRouter.post(
+  '/',
+  upload.none(),
+  // createPostValidator,
+  postsController.createPost,
+);
 
 postsRouter.post('/images', upload.array('images'), postsController.createMedia);
 postsRouter.get('/:postId', postsController.getPost);
