@@ -1,37 +1,32 @@
-import Sequelize from "sequelize";
+import Sequelize from 'sequelize';
 
-import admin from "./admin.js";
-import category from "./category.js";
-import chatroom from "./chatroom.js";
-import chatroomMember from "./chatroomMember.js";
-import chat from "./chat.js";
-import comment from "./comment.js";
-import commentHash from "./commentHash.js";
-import follow from "./follow.js";
-import hashtag from "./hashtag.js";
-import liked from "./liked.js";
-import media from "./media.js";
-import mention from "./mention.js";
-import myPings from "./myPings.js";
-import myPingsPost from "./myPingsPost.js";
-import notification from "./notification.js";
-import post from "./post.js";
-import postHash from "./postHash.js";
-import search from "./search.js";
-import searchHistory from "./searchHistory.js";
-import servicePost from "./servicePost.js";
-import sharePings from "./sharePings.js";
-import user from "./user.js";
+import admin from './admin.js';
+import category from './category.js';
+import chatroom from './chatroom.js';
+import chatroomMember from './chatroomMember.js';
+import chat from './chat.js';
+import comment from './comment.js';
+import commentHash from './commentHash.js';
+import follow from './follow.js';
+import hashtag from './hashtag.js';
+import liked from './liked.js';
+import media from './media.js';
+import mention from './mention.js';
+import myPings from './myPings.js';
+import myPingsPost from './myPingsPost.js';
+import notification from './notification.js';
+import post from './post.js';
+import postHash from './postHash.js';
+import search from './search.js';
+import searchHistory from './searchHistory.js';
+import servicePost from './servicePost.js';
+import sharePings from './sharePings.js';
+import user from './user.js';
 
-const env = process.env.NODE_ENV || "development";
-import config from "../config/config.js";
+const env = process.env.NODE_ENV || 'development';
+import config from '../config/config.js';
 const conf = config[env];
-const sequelize = new Sequelize(
-  conf.database,
-  conf.username,
-  conf.password,
-  conf
-);
+const sequelize = new Sequelize(conf.database, conf.username, conf.password, conf);
 
 const db = {};
 db.Admin = admin(sequelize, Sequelize);

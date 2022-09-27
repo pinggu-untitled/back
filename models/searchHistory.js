@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const SearchHistory = sequelize.define(
-    "SearchHistory",
+    'SearchHistory',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -21,24 +21,24 @@ export default (sequelize, DataTypes) => {
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.literal("now()"),
+        defaultValue: DataTypes.literal('now()'),
       },
       updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.literal("now()"),
+        defaultValue: DataTypes.literal('now()'),
       },
     },
     {
-      modelName: "SearchHistory",
-      tableName: "SEARCHHISTORY",
+      modelName: 'SearchHistory',
+      tableName: 'SEARCHHISTORY',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
-    }
+    },
   );
 
   return SearchHistory;

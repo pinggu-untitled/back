@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const ChatroomMember = sequelize.define(
-    "ChatroomMember",
+    'ChatroomMember',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,7 +10,7 @@ export default (sequelize, DataTypes) => {
       },
       chatroom: {
         type: DataTypes.INTEGER,
-        as: "Members",
+        as: 'Members',
         foreignKey: true,
         primaryKey: true,
       },
@@ -22,19 +22,19 @@ export default (sequelize, DataTypes) => {
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.literal("now()"),
+        defaultValue: DataTypes.literal('now()'),
       },
     },
     {
-      modelName: "ChatroomMember",
-      tableName: "CHATROOMMEMBER",
+      modelName: 'ChatroomMember',
+      tableName: 'CHATROOMMEMBER',
       timestamps: false,
       underscored: false,
       paranoid: false,
-      charset: "utf8mb4",
-      collate: "utf8mb4_general_ci",
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
       sequelize,
-    }
+    },
   );
 
   return ChatroomMember;

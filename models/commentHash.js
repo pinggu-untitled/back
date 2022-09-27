@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const CommentHash = sequelize.define(
-    "CommentHash",
+    'CommentHash',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -20,15 +20,15 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "CommentHash",
-      tableName: "COMMENTHASH",
+      modelName: 'CommentHash',
+      tableName: 'COMMENTHASH',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8mb4",
-      collate: "utf8mb4_general_ci",
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
       sequelize,
-    }
+    },
   );
 
   return CommentHash;
