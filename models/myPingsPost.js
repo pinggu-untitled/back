@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const MyPingsPost = sequelize.define(
-    "MyPingsPost",
+    'MyPingsPost',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -20,13 +20,13 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "MyPingsPost",
-      tableName: "MYPINGSPOST",
+      modelName: 'MyPingsPost',
+      tableName: 'MYPINGSPOST',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );
