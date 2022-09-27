@@ -5,9 +5,9 @@ import {
   createPostValidator,
   updateCommentValidator,
   updatePostValidator,
-} from '../validator.js';
+} from '../middlewares/validator.js';
 import { postsController, commentController, likedController } from '../controller/index.js';
-import { upload } from '../upload.js';
+import { upload } from '../middlewares/upload.js';
 
 const postsRouter = express.Router();
 
