@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Hashtag = sequelize.define(
-    "Hashtag",
+    'Hashtag',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -15,25 +15,25 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "Hashtag",
-      tableName: "HASHTAG",
+      modelName: 'Hashtag',
+      tableName: 'HASHTAG',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
-    }
+    },
   );
 
   Hashtag.associate = (db) => {
     db.Hashtag.belongsToMany(db.Post, {
       through: db.PostHash,
-      foreignKey: "hash",
+      foreignKey: 'hash',
     });
     db.Hashtag.belongsToMany(db.Comment, {
       through: db.CommentHash,
-      foreignKey: "hash",
+      foreignKey: 'hash',
     });
   };
   return Hashtag;

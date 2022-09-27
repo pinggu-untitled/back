@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const PostHash = sequelize.define(
-    "PostHash",
+    'PostHash',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -20,15 +20,15 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "PostHash",
-      tableName: "POSTHASH",
+      modelName: 'PostHash',
+      tableName: 'POSTHASH',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
-    }
+    },
   );
 
   return PostHash;

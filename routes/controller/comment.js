@@ -19,12 +19,7 @@ export async function createComment(req, res, next) {
   const { pid, content } = req.body;
   const conn = await db.getConnection();
   try {
-    const insertData = await commentRepository.create(
-      conn,
-      pid,
-      postId,
-      content
-    );
+    const insertData = await commentRepository.create(conn, pid, postId, content);
     res.status(200).json(insertData);
   } catch (err) {
     return res.status(500).json(err);

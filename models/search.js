@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Search = sequelize.define(
-    "Search",
+    'Search',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,32 +10,32 @@ export default (sequelize, DataTypes) => {
       },
       content: {
         type: DataTypes.STRING,
-        as: "Searches",
+        as: 'Searches',
       },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.literal("now()"),
+        defaultValue: DataTypes.literal('now()'),
       },
     },
     {
-      modelName: "Search",
-      tableName: "SEARCH",
+      modelName: 'Search',
+      tableName: 'SEARCH',
       timestamps: true,
       updatedAt: false,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
-    }
+    },
   );
 
   Search.associate = (db) => {
     db.Search.belongsToMany(db.User, {
       through: db.SearchHistory,
-      as: "Searchers",
-      foreignKey: "search",
+      as: 'Searchers',
+      foreignKey: 'search',
     });
   };
 

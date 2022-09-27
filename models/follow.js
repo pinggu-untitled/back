@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Follow = sequelize.define(
-    "Follow",
+    'Follow',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,27 +10,27 @@ export default (sequelize, DataTypes) => {
       },
       host: {
         type: DataTypes.INTEGER,
-        as: "Followings",
+        as: 'Followings',
         primaryKey: true,
         foreignKey: true,
       },
       follow: {
         type: DataTypes.INTEGER,
-        as: "Followers",
+        as: 'Followers',
         primaryKey: true,
         foreignKey: true,
       },
     },
     {
-      modelName: "Follow",
-      tableName: "FOLLOW",
+      modelName: 'Follow',
+      tableName: 'FOLLOW',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
-    }
+    },
   );
 
   return Follow;
