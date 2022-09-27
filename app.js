@@ -61,9 +61,9 @@ if (prod) {
   sessionOption.cookie.proxy = true;
 }
 
-// app.use(session(sessionOption));
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(session(sessionOption));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", apiRouter);
 

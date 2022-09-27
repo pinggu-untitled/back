@@ -3,20 +3,24 @@ export default (sequelize, DataTypes) => {
     "Media", // images 테이블 생성
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       src: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(80),
         allowNull: false,
+        unique: true,
       },
     },
     {
       modelName: "Media",
       tableName: "MEDIA",
       timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true,
       paranoid: false,
       charset: "utf8",

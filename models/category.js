@@ -3,19 +3,24 @@ export default (sequelize, DataTypes) => {
     "Category",
     {
       id: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.TINYINT.UNSIGNED,
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       cate_name: {
         type: DataTypes.STRING(30),
+        allowNull: false,
+        unique: true,
       },
     },
     {
       modelName: "Category",
       tableName: "CATEGRORY",
       timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true,
       paranoid: false,
       charset: "utf8",

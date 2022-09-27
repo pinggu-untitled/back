@@ -3,23 +3,20 @@ export default (sequelize, DataTypes) => {
     "User",
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       email: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: true,
       },
       nickname: {
-        type: DataTypes.STRING(30),
+        type: DataTypes.STRING(50),
         allowNull: false,
         unique: true,
-      },
-      password: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
       },
       profile_image_url: {
         type: DataTypes.STRING(100),
@@ -27,7 +24,7 @@ export default (sequelize, DataTypes) => {
       },
       social_links: {
         type: DataTypes.STRING(15),
-        allowNull: true,
+        allowNull: false,
       },
       bio: {
         type: DataTypes.STRING(150),
@@ -35,15 +32,23 @@ export default (sequelize, DataTypes) => {
       },
       userid: {
         type: DataTypes.STRING(100),
+        allowNull: false,
       },
-      last_logged_in_at: {
+      deleted_at: {
         type: DataTypes.DATE,
+        allowNull: true,
+      },
+      last_logged_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
     },
     {
       modelName: "User",
       tableName: "USER",
       timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true,
       paranoid: true,
       charset: "utf8",

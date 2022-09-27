@@ -1,4 +1,5 @@
 import { Router } from "express";
+import auth from "./auth.js";
 import users from "./users.js";
 import posts from "./posts.js";
 import chatrooms from "./chatrooms.js";
@@ -8,6 +9,7 @@ import results from "./results.js";
 
 const router = Router();
 
+router.use("/auth", auth);
 router.use("/users", users);
 router.use("/posts", posts);
 router.use("/search_histories", searchHistories);
