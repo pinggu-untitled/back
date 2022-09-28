@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const User = sequelize.define(
-    "User",
+    'User',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -41,58 +41,58 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "User",
-      tableName: "USER",
+      modelName: 'User',
+      tableName: 'USER',
       timestamps: true,
       underscored: true,
       paranoid: true,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );
 
   User.associate = (db) => {
-    db.User.hasMany(db.Post, { foreignKey: "user" });
-    db.User.hasMany(db.Comment, { foreignKey: "user" });
+    db.User.hasMany(db.Post, { foreignKey: 'user' });
+    db.User.hasMany(db.Comment, { foreignKey: 'user' });
     db.User.belongsToMany(db.Post, {
       through: db.Liked,
-      foreignKey: "user",
+      foreignKey: 'user',
     });
     db.User.belongsToMany(db.User, {
       through: db.Follow,
-      as: "Followers",
-      foreignKey: "follow",
+      as: 'Followers',
+      foreignKey: 'follow',
     });
     db.User.belongsToMany(db.User, {
       through: db.Follow,
-      as: "Followings",
-      foreignKey: "host",
+      as: 'Followings',
+      foreignKey: 'host',
     });
-    db.User.hasMany(db.Chat, { foreignKey: "sender" });
+    db.User.hasMany(db.Chat, { foreignKey: 'sender' });
     db.User.belongsToMany(db.Chatroom, {
       through: db.ChatroomMember,
-      foreignKey: "user",
+      foreignKey: 'user',
     });
     db.User.hasMany(db.MyPings, {
-      foreignKey: "host",
+      foreignKey: 'host',
     });
 
     db.User.belongsToMany(db.MyPings, {
       through: db.SharePings,
-      foreignKey: "guest",
+      foreignKey: 'guest',
     });
     db.User.belongsToMany(db.Search, {
       through: db.SearchHistory,
-      as: "Searches",
-      foreignKey: "user",
+      as: 'Searches',
+      foreignKey: 'user',
     });
     db.User.hasMany(db.SharePings, {
-      foreignKey: "host",
+      foreignKey: 'host',
     });
-    db.User.hasMany(db.Notification, { foreignKey: "sender" });
-    db.User.hasMany(db.Notification, { foreignKey: "receiver" });
-    db.User.hasMany(db.ServicePost, { foreignKey: "user" });
+    db.User.hasMany(db.Notification, { foreignKey: 'sender' });
+    db.User.hasMany(db.Notification, { foreignKey: 'receiver' });
+    db.User.hasMany(db.ServicePost, { foreignKey: 'user' });
   };
 
   return User;

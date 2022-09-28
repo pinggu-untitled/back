@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const ServicePost = sequelize.define(
-    "ServicePost",
+    'ServicePost',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -22,19 +22,19 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "ServicePost",
-      tableName: "SERVICEPOST",
+      modelName: 'ServicePost',
+      tableName: 'SERVICEPOST',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8mb4",
-      collate: "utf8mb4_general_ci",
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
       sequelize,
     }
   );
 
   ServicePost.associate = (db) => {
-    db.ServicePost.belongsTo(db.User, { foreignKey: "user" });
+    db.ServicePost.belongsTo(db.User, { foreignKey: 'user' });
   };
 
   return ServicePost;

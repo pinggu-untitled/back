@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Chat = sequelize.define(
-    "Chat",
+    'Chat',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -18,24 +18,24 @@ export default (sequelize, DataTypes) => {
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.literal("now()"),
+        defaultValue: DataTypes.literal('now()'),
       },
     },
     {
-      modelName: "Chat",
-      tableName: "CHAT",
+      modelName: 'Chat',
+      tableName: 'CHAT',
       timestamps: false,
       underscored: false,
       paranoid: false,
-      charset: "utf8mb4",
-      collate: "utf8mb4_general_ci",
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
       sequelize,
     }
   );
 
   Chat.associate = (db) => {
-    db.Chat.belongsTo(db.User, { foreignKey: "sender" });
-    db.Chat.belongsTo(db.Chatroom, { foreignKey: "chatroom" });
+    db.Chat.belongsTo(db.User, { foreignKey: 'sender' });
+    db.Chat.belongsTo(db.Chatroom, { foreignKey: 'chatroom' });
   };
 
   return Chat;

@@ -1,9 +1,9 @@
 export default (sequelize, DataTypes) => {
   const Category = sequelize.define(
-    "Category",
+    'Category',
     {
       id: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.TINYINT.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
@@ -13,19 +13,21 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "Category",
-      tableName: "CATEGRORY",
+      modelName: 'Category',
+      tableName: 'CATEGORY',
       timestamps: true,
       underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );
 
   Category.associate = (db) => {
-    db.Category.hasMany(db.MyPings, { foreignKey: "category" });
+    db.Category.hasMany(db.MyPings, { foreignKey: 'category' });
   };
 
   return Category;

@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const SharePings = sequelize.define(
-    "SharePings",
+    'SharePings',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -15,32 +15,32 @@ export default (sequelize, DataTypes) => {
       },
       mypings: {
         type: DataTypes.INTEGER,
-        as: "Guests",
+        as: 'Guests',
         foreignKey: true,
         primaryKey: true,
       },
       guest: {
         type: DataTypes.INTEGER,
-        as: "MyPings",
+        as: 'MyPings',
         foreignKey: true,
         primaryKey: true,
       },
     },
 
     {
-      modelName: "SharePings",
-      tableName: "SHAREPINGS",
+      modelName: 'SharePings',
+      tableName: 'SHAREPINGS',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );
 
   SharePings.associate = (db) => {
-    db.SharePings.belongsTo(db.User, { foreignKey: "host" });
+    db.SharePings.belongsTo(db.User, { foreignKey: 'host' });
   };
 
   return SharePings;

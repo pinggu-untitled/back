@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Post = sequelize.define(
-    "Post",
+    'Post',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -35,33 +35,33 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "Post",
-      tableName: "POST",
+      modelName: 'Post',
+      tableName: 'POST',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8mb4",
-      collate: "utf8mb4_general_ci",
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
       sequelize,
     }
   );
   Post.associate = (db) => {
-    db.Post.belongsTo(db.User, { foreignKey: "user" });
-    db.Post.hasMany(db.Media, { foreignKey: "post" });
-    db.Post.hasMany(db.Comment, { foreignKey: "post" });
+    db.Post.belongsTo(db.User, { foreignKey: 'user' });
+    db.Post.hasMany(db.Media, { foreignKey: 'post' });
+    db.Post.hasMany(db.Comment, { foreignKey: 'post' });
     db.Post.belongsToMany(db.Hashtag, {
       through: db.PostHash,
-      foreignKey: "post",
+      foreignKey: 'post',
     });
-    db.Post.hasMany(db.Mention, { foreignKey: "post" });
+    db.Post.hasMany(db.Mention, { foreignKey: 'post' });
     db.Post.belongsToMany(db.User, {
       through: db.Liked,
-      as: "Likers",
-      foreignKey: "post",
+      as: 'Likers',
+      foreignKey: 'post',
     });
     db.Post.belongsToMany(db.MyPings, {
       through: db.MyPingsPost,
-      foreignKey: "post",
+      foreignKey: 'post',
     });
   };
 

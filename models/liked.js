@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Liked = sequelize.define(
-    "Liked",
+    'Liked',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,13 +19,13 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "Liked",
-      tableName: "LIKED",
+      modelName: 'Liked',
+      tableName: 'LIKED',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );

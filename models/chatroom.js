@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Chatroom = sequelize.define(
-    "Chatroom",
+    'Chatroom',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,13 +10,15 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "Chatroom",
-      tableName: "CHATROOM",
+      modelName: 'Chatroom',
+      tableName: 'CHATROOM',
       timestamps: true,
       underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );
@@ -24,10 +26,10 @@ export default (sequelize, DataTypes) => {
   Chatroom.associate = (db) => {
     db.Chatroom.belongsToMany(db.User, {
       through: db.ChatroomMember,
-      as: "Members",
-      foreignKey: "chatroom",
+      as: 'Members',
+      foreignKey: 'chatroom',
     });
-    db.Chatroom.hasMany(db.Chat, { as: "Chats", foreignKey: "chatroom" });
+    db.Chatroom.hasMany(db.Chat, { as: 'Chats', foreignKey: 'chatroom' });
   };
   return Chatroom;
 };

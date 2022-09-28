@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Admin = sequelize.define(
-    "Admin",
+    'Admin',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,13 +19,13 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "Admin",
-      tableName: "ADMIN",
+      modelName: 'Admin',
+      tableName: 'ADMIN',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );

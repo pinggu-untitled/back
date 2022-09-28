@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Notification = sequelize.define(
-    "Notification",
+    'Notification',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -13,22 +13,22 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "Notification",
-      tableName: "NOTIFICATION",
+      modelName: 'Notification',
+      tableName: 'NOTIFICATION',
       timestamps: true,
       underscored: true,
       paranoid: false,
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
       sequelize,
     }
   );
 
   Notification.associate = (db) => {
-    db.Notification.belongsTo(db.User, { as: "Sender", foreignKey: "sender" });
+    db.Notification.belongsTo(db.User, { as: 'Sender', foreignKey: 'sender' });
     db.Notification.belongsTo(db.User, {
-      as: "Receiver",
-      foreignKey: "receiver",
+      as: 'Receiver',
+      foreignKey: 'receiver',
     });
   };
 
