@@ -8,7 +8,7 @@ router.get('/', async (req, res, next) => {
   const conn = await db.getConnection();
   try {
     const data = await db.execute(
-      `SELECT sh.id, sh.updated_at, s.content FROM SEARCHHISTORY as sh join SEARCH as s on sh.id = s.id WHERE sh.user = ? ORDER BY sh.updated_at desc`,
+      `SELECT sh.id, sh.updated_at, s.content FROM SEARCHHISTORY as sh join SEARCH as s on sh.search = s.id WHERE sh.user = ? ORDER BY sh.updated_at desc;`,
       [USER_NUMBER],
     );
     return res.status(200).json(data[0]);
@@ -20,9 +20,30 @@ router.get('/', async (req, res, next) => {
 });
 router.post('/', async (req, res, next) => {
   const conn = await db.getConnection();
+  const { content } = req.body;
   try {
     await conn.beginTransaction();
+    let searchId = await conn
+      .execute('INSERT ignore INTO SEARCH (content) values (?)', [content])
+      .then((res) => res[0].insertId);
+    if (!searchId) {
+      searchId = await conn.execute('SELECT id from SEARCH WHERE content = ?', [content]).then((res) => res[0][0].id);
+    }
+    console.log(searchId);
+
+    try {
+      await conn.execute('INSERT INTO SEARCHHISTORY (user, search) values (?, ?)', [USER_NUMBER, searchId]);
+    } catch (err) {
+      await conn.execute('UPDATE SEARCHHISTORY SET updated_at = NOW() WHERE user = ? and search = ?', [
+        USER_NUMBER,
+        searchId,
+      ]);
+    }
+
+    await conn.commit();
+    res.status(200).json({ message: 'created' });
   } catch (err) {
+    await conn.rollback();
     return res.status(400).json(err);
   } finally {
     conn.release();
