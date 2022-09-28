@@ -8,11 +8,11 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import helmet from 'helmet';
 import passport from 'passport';
-
-dotenv.config();
 import db from './models/index.js';
 import passportConfig from './passport/index.js';
 import apiRouter from './routes/api/index.js';
+
+dotenv.config();
 // const webSocket = require("./socket");
 
 const app = express();
@@ -52,7 +52,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 const sessionOption = {
   resave: false,
   saveUninitialized: false,
-  secret: process.env.COOKIE_SECRET, // cookie_secret + cookie 값 => session 유저 데이터 복원
+  secret: process.env.COOKIE_SECRET,
   httpOnly: true,
 };
 
@@ -65,7 +65,7 @@ if (prod) {
 // app.use(passport.initialize());
 // app.use(passport.session());
 
-app.use('/', apiRouter); //api 주소가 아닌 경우, react 가 구동되는 index.html 파일로 이동
+app.use('/', apiRouter);
 
 app.use((err, req, res, next) => {
   return res.send(err);
