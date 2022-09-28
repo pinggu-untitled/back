@@ -3,7 +3,7 @@ export default (sequelize, DataTypes) => {
     'User',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
@@ -13,13 +13,9 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
       },
       nickname: {
-        type: DataTypes.STRING(30),
+        type: DataTypes.STRING(50),
         allowNull: false,
         unique: true,
-      },
-      password: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
       },
       profile_image_url: {
         type: DataTypes.STRING(100),
@@ -36,8 +32,12 @@ export default (sequelize, DataTypes) => {
       userid: {
         type: DataTypes.STRING(100),
       },
-      last_logged_in_at: {
+      last_logged_at: {
         type: DataTypes.DATE,
+      },
+      deleted_at: {
+        type: DATE,
+        allowNull: true,
       },
     },
     {
@@ -45,7 +45,9 @@ export default (sequelize, DataTypes) => {
       tableName: 'USER',
       timestamps: true,
       underscored: true,
-      paranoid: true,
+      paranoid: false,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,

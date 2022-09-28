@@ -3,30 +3,18 @@ export default (sequelize, DataTypes) => {
     'SearchHistory',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       user: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
-        primaryKey: true,
       },
       search: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
-        primaryKey: true,
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.literal('now()'),
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.literal('now()'),
       },
     },
     {
@@ -35,6 +23,8 @@ export default (sequelize, DataTypes) => {
       timestamps: true,
       underscored: true,
       paranoid: false,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,

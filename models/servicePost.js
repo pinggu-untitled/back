@@ -3,7 +3,7 @@ export default (sequelize, DataTypes) => {
     'ServicePost',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
@@ -27,6 +27,8 @@ export default (sequelize, DataTypes) => {
       timestamps: true,
       underscored: true,
       paranoid: false,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       charset: 'utf8mb4',
       collate: 'utf8mb4_general_ci',
       sequelize,

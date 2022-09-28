@@ -3,21 +3,19 @@ export default (sequelize, DataTypes) => {
     'ChatroomMember',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       chatroom: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         as: 'Members',
         foreignKey: true,
-        primaryKey: true,
       },
       user: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
-        primaryKey: true,
       },
       created_at: {
         type: DataTypes.DATE,

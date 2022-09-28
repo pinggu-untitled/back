@@ -3,19 +3,17 @@ export default (sequelize, DataTypes) => {
     'CommentHash',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       comment: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
       },
       hash: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
       },
     },
