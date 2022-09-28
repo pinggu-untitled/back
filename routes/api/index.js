@@ -7,9 +7,7 @@ import searchHistories from './searchHistories.js';
 import results from './results.js';
 
 const router = Router();
-router.get('/', (req, res, next) => {
-  console.log('hello');
-});
+
 router.use('/users', users);
 router.use('/posts', posts);
 router.use('/search_histories', searchHistories);

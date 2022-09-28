@@ -24,6 +24,8 @@ export default (sequelize, DataTypes) => {
       tableName: 'COMMENTHASH',
       timestamps: true,
       underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       paranoid: false,
       charset: 'utf8mb4',
       collate: 'utf8mb4_general_ci',

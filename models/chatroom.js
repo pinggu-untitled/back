@@ -14,6 +14,8 @@ export default (sequelize, DataTypes) => {
       tableName: 'CHATROOM',
       timestamps: true,
       underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       paranoid: false,
       charset: 'utf8',
       collate: 'utf8_general_ci',
