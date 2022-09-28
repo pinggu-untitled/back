@@ -36,7 +36,7 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.DATE,
       },
       deleted_at: {
-        type: DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
     },
@@ -51,7 +51,7 @@ export default (sequelize, DataTypes) => {
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,
-    }
+    },
   );
 
   User.associate = (db) => {
