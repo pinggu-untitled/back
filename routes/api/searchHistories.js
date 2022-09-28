@@ -18,7 +18,16 @@ router.get('/', async (req, res, next) => {
     conn.release();
   }
 });
-router.post('/', async (req, res, next) => {});
+router.post('/', async (req, res, next) => {
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+  } catch (err) {
+    return res.status(400).json(err);
+  } finally {
+    conn.release();
+  }
+});
 router.delete('/', async (req, res, next) => {
   const conn = await db.getConnection();
   try {
