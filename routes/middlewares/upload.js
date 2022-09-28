@@ -19,13 +19,15 @@ export const time = {
   date: currentTime.getDate(),
 };
 
-const storage = multer.diskStorage({
-  destination: (req, file, done) => {
-    done(null, `uploads/images/${time.year}/${time.month}/${time.date}/`);
-  },
-  filename: (req, file, done) => {
-    done(null, `${uuid()}.${file.mimetype.split('/')[1]}`);
-  },
+export const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './uploads');
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${uuid()}.${mime.extension(file.mimetype)}`);
+    },
+  }),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
