@@ -3,27 +3,27 @@ export default (sequelize, DataTypes) => {
     'Mention', // posts 테이블 생성
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       sender: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
         as: 'Sender',
       },
       receiver: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
         as: 'Receiver',
       },
       comment: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
       },
       post: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
       },
     },
@@ -33,6 +33,8 @@ export default (sequelize, DataTypes) => {
       timestamps: true,
       underscored: true,
       paranoid: false,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,

@@ -3,20 +3,18 @@ export default (sequelize, DataTypes) => {
     'MyPingsPost',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       mypings: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
-        primaryKey: true,
       },
       post: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
-        primaryKey: true,
       },
     },
     {
@@ -25,6 +23,8 @@ export default (sequelize, DataTypes) => {
       timestamps: true,
       underscored: true,
       paranoid: false,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,

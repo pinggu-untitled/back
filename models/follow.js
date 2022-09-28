@@ -3,21 +3,19 @@ export default (sequelize, DataTypes) => {
     'Follow',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       host: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         as: 'Followings',
-        primaryKey: true,
         foreignKey: true,
       },
       follow: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         as: 'Followers',
-        primaryKey: true,
         foreignKey: true,
       },
     },
@@ -27,6 +25,8 @@ export default (sequelize, DataTypes) => {
       timestamps: true,
       underscored: true,
       paranoid: false,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,

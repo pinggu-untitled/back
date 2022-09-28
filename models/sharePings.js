@@ -3,27 +3,24 @@ export default (sequelize, DataTypes) => {
     'SharePings',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
       host: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         foreignKey: true,
-        primaryKey: true,
       },
       mypings: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         as: 'Guests',
         foreignKey: true,
-        primaryKey: true,
       },
       guest: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         as: 'MyPings',
         foreignKey: true,
-        primaryKey: true,
       },
     },
 
@@ -33,6 +30,8 @@ export default (sequelize, DataTypes) => {
       timestamps: true,
       underscored: true,
       paranoid: false,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,

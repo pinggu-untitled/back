@@ -3,7 +3,7 @@ export default (sequelize, DataTypes) => {
     'Notification',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
         unique: true,
@@ -11,11 +11,16 @@ export default (sequelize, DataTypes) => {
       content: {
         type: DataTypes.STRING(30),
       },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.literal('now()'),
+      },
     },
     {
       modelName: 'Notification',
       tableName: 'NOTIFICATION',
-      timestamps: true,
+      timestamps: false,
       underscored: true,
       paranoid: false,
       charset: 'utf8',
