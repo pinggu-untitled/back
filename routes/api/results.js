@@ -8,23 +8,29 @@ resultsRouter.get('/', async (req, res, next) => {
   const { search_query, filter } = req.query;
   const conn = await db.getConnection();
   try {
+    let post, user, mypings;
     switch (filter) {
       // return post[], mypings[]
       case 'title':
-        const post = await conn
+        post = await conn
           .execute(`SELECT * FROM POST as ps WHERE ps.title like '%${search_query}%' and ps.is_private = 0`)
           .then((res) => res[0]);
-        const mypings = await conn
+        mypings = await conn
           .execute(`SELECT * FROM MYPINGS as mp WHERE mp.title like '%${search_query}%' and mp.is_private = 0`)
           .then((res) => res[0]);
-        res.status(200).json({ post, mypings });
-
-        break;
+        return res.status(200).json({ post, mypings });
       // return post[]
       case 'content':
-        break;
+        post = await conn
+          .execute(`SELECT * FROM POST as ps WHERE ps.content like '%${search_query}%' and ps.is_private = 0`)
+          .then((res) => res[0]);
+        return res.status(200).json({ post });
       // return user[]
       case 'user':
+        user = await conn
+          .execute(`SELECT * FROM USER as us WHERE us.nickname like '%${search_query}%'`)
+          .then((res) => res[0]);
+        return res.status(200).json({ user });
         break;
       // return mypings[]
       case 'category':
@@ -34,6 +40,7 @@ resultsRouter.get('/', async (req, res, next) => {
         break;
       default:
         throw new Error('Invalid filter!');
+        break;
     }
   } catch (err) {
     return res.status(500).json({ message: 'failed' });
