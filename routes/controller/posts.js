@@ -52,7 +52,7 @@ export async function getPost(req, res, next) {
   const conn = await db.getConnection();
   try {
     const result = {};
-    [result.post, result.likers, result.parentComments, result.childComments, result.files] = await Promise.all([
+    const [post, likers, parentComments, childComments, files] = await Promise.all([
       postRepository.getById(conn, postId),
       likeRepository.getAll(conn, postId),
       commentRepository.getParentComments(conn, postId),
@@ -60,7 +60,12 @@ export async function getPost(req, res, next) {
       fileRepository.getAll(conn, postId),
     ]);
 
-    return res.status(200).json(result);
+    parentComments.map((parent) => {
+      parent.child = childComments.filter((el) => el.pid === parent.id);
+      return parent;
+    });
+
+    return res.status(200).json({ post, likers, parentComments, files });
   } catch (err) {
     return res.status(404).json(err);
   } finally {
