@@ -39,15 +39,6 @@ export async function getPosts(req, res, next) {
         isFirstPage: page === 0,
       });
     }, 300);
-    // return res.status(200).json({
-    //   contents: data.slice(page * size, (page + 1) * size),
-    //   pageNumber: page,
-    //   pageSize: size,
-    //   totalPages,
-    //   totalCount,
-    //   isLastPage: totalPages <= page,
-    //   isFirstPage: page === 0,
-    // });
   } catch (err) {
     return res.status(404).json(err);
   } finally {
@@ -68,25 +59,7 @@ export async function getPost(req, res, next) {
       commentRepository.getChildComments(conn, postId),
       fileRepository.getAll(conn, postId),
     ]);
-    // [
-    //   result.post,
-    //   result.likers,
-    //   result.parentComments,
-    //   result.childComments,
-    //   result.files,
-    // ] = data;
 
-    // result.post = await postRepository.getById(conn, postId);
-    // result.likers = await likeRepository.getAll(conn, postId);
-    // result.parentComments = await commentRepository.getParentComments(
-    //   conn,
-    //   postId
-    // );
-    // result.childComments = await commentRepository.getChildComments(
-    //   conn,
-    //   postId
-    // );
-    // result.files = await fileRepository.getAll(conn, postId);
     return res.status(200).json(result);
   } catch (err) {
     return res.status(404).json(err);
@@ -95,25 +68,10 @@ export async function getPost(req, res, next) {
   }
 }
 
-function getBody(string) {
-  const stringData = JSON.stringify(string).replaceAll(' ', '').split(`\\n`).join('').split('\\').join('');
-  const { post, mentions, hashtags } = JSON.parse(stringData.substring(1, stringData.length - 1));
-  return { post, mentions, hashtags };
-}
-
 export async function createPost(req, res, next) {
-  const files = req.files;
-  console.log('hello');
-  // const stringData = JSON.stringify(req.body.data)
-  //   .replaceAll(' ', '')
-  //   .split(`\\n`)
-  //   .join('')
-  //   .split('\\')
-  //   .join('');
-  // const { post, mentions, hashtags } = JSON.parse(
-  //   stringData.substring(1, stringData.length - 1)
-  // );
-  const { post, mentions, hashtags } = files ? getBody(req.body.data) : req.body;
+  const { title, content, longitude, latitude, is_private } = req.body;
+  const { mentions, hashtags, files } = req.body;
+  const post = { title, content, longitude, latitude };
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
@@ -132,24 +90,10 @@ export async function createPost(req, res, next) {
   }
 }
 
-// export async function createPostWithMedia(req, res, next) {
-//   const { post, mentions, hashtags, files } = req.body;
-//   const conn = await db.getConnection();
-//   try {
-//     await conn.beginTransaction();
-//     const newPost = await postRepository
-//       .create(conn, post, mentions, hashtags)
-//       .then((result) => result)
-//       .catch(console.error);
-//     await conn.commit();
-//     return res.status(200).json(newPost);
-//   } catch (err) {
-//     await conn.rollback();
-//     return res.status(500).json(err);
-//   } finally {
-//     conn.release();
-//   }
-// }
+export async function createMedia(req, res, next) {
+  const images = req.files;
+  return res.status(200).json(images.map((el) => el.filename));
+}
 
 export async function updatePost(req, res, next) {
   const { post, mentions, hashtags } = req.body;
