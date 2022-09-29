@@ -1,5 +1,6 @@
 import passport from 'passport';
 import passportKakao from 'passport-kakao';
+import emojiRegex from 'emoji-regex';
 import db from '../models/index.js';
 const { Strategy: KakaoStrategy } = passportKakao;
 const { User } = db;
@@ -14,10 +15,23 @@ export default () => {
       if (exUser) {
         done(null, exUser);
       } else {
+        const nickname = profile.username;
+        const regex = emojiRegex();
+        let emoji = '';
+        for (const match of nickname.matchAll(regex)) {
+          emoji += match[0];
+        }
+
+        let newNickname = '';
+        if (emoji.length !== 0) {
+          const emoRegex = new RegExp(`[${emoji}]`, 'g');
+          newNickname = nickname.replace(emoRegex, '');
+        }
+
         const newUser = await User.create({
           userid: profile.id,
           social_links: 'kakao',
-          nickname: profile.username + profile.id,
+          nickname: newNickname + profile.id,
           profile_image_url: profile._json.properties.thumbnail_image,
           email: profile._json.kakao_account.email
         });
