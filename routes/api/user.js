@@ -7,6 +7,15 @@ const { Op } = Sequelize;
 
 const router = Router();
 
+/* 세션에 저장된 사용자 정보 가져오기 */
+router.get('/me', (req, res) => {
+  if (req.user?.id) {
+    res.status(200).json(req.session.passport.user);
+  }
+  else
+    res.status(500).json(null);
+});
+
 /* 사용자 정보 가져오기 */
 router.get('/:userId', (req, res) => {
   User.findOne({
