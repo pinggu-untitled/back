@@ -24,7 +24,7 @@ export async function getPosts(req, res, next) {
     /**
      * infinite scroll return
      */
-    const data = await postRepository.getAll(conn);
+    const data = await postRepository.getFollwing(conn);
     const totalCount = data.length;
     const totalPages = Math.round(totalCount / size);
 
