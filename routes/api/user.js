@@ -20,7 +20,7 @@ router.get('/me', (req, res) => {
 router.get('/:userId', (req, res) => {
   User.findOne({
     where: { id: req.params.userId },
-    attributes: ['id', 'nickname', 'profile_image_url']
+    attributes: ['id', 'nickname', 'bio', 'profile_image_url']
   })
   .then(user => {
     if (user === null) throw new Error('사용자를 찾을 수 없음')
@@ -29,22 +29,6 @@ router.get('/:userId', (req, res) => {
   .catch(err => {
     console.error(err);
     res.status(500).json({message: 'fail'});
-  });
-});
-
-/* 사용자 프로필 가져오기 */
-router.get('/:userId/profile', (req, res) => {
-  User.findOne({
-    where: { id: req.params.userId },
-    attributes: ['nickname', 'bio', 'profile_image_url']
-  })
-  .then(profile => {
-    if (profile === null) throw new Error('사용자를 찾을 수 없음');
-    res.json(profile);
-  })
-  .catch(err => {
-    console.error(err);
-    res.json({message: 'fail'});
   });
 });
 
