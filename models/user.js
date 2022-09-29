@@ -36,7 +36,7 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.DATE,
       },
       deleted_at: {
-        type: DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
     },
