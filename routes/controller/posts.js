@@ -75,13 +75,13 @@ export async function getPost(req, res, next) {
 
 export async function createPost(req, res, next) {
   const { title, content, longitude, latitude, is_private } = req.body;
-  const { mentions, hashtags, files } = req.body;
-  const post = { title, content, longitude, latitude };
+  const { mentions, hashtags, images } = req.body;
+  const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
     const newPost = await postRepository
-      .create(conn, post, mentions, hashtags, files)
+      .create(conn, post, mentions, hashtags, images)
       .then((result) => result)
       .catch(console.error);
 

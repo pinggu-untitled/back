@@ -21,7 +21,7 @@ export const time = {
 
 const storage = multer.diskStorage({
   destination: (req, file, done) => {
-    done(null, `upload/images/${time.year}/${time.month}/${time.date}/`);
+    done(null, `uploads/images/${time.year}/${time.month}/${time.date}/`);
   },
   filename: (req, file, done) => {
     done(null, `${uuid()}.${file.mimetype.split('/')[1]}`);

@@ -62,6 +62,7 @@ export async function create(conn, post, mentions, hashtags, images) {
       Number(mention.receiver),
     ]);
   }
+  console.log(images);
   if (images.length !== 0) {
     images.map(async (image) => {
       await fileRepository.create(conn, image, newPost.id);
