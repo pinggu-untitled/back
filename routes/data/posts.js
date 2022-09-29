@@ -10,7 +10,7 @@ export async function getAll(conn) {
     .then((result) => result[0]);
 }
 // follwing 한 사람들 게시물로 조건 걸기
-export async function getFollwing(conn) {
+export async function getFollowing(conn) {
   return conn
     .execute(
       'SELECT po.id, po.user, po.created_at, po.title, po.content, po.longitude, po.latitude, po.hits, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = 1) ORDER BY po.created_at desc',
