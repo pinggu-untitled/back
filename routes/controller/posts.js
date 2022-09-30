@@ -25,13 +25,28 @@ export async function getPosts(req, res, next) {
      * infinite scroll return
      */
     const data = await postRepository.getFollowing(conn);
-    console.log(data);
-    const totalCount = data.length;
+    const result = data.map((post) => ({
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      longitude: post.longitude,
+      latitude: post.latitude,
+      hits: post.hits,
+      is_private: post.is_private,
+      created_at: post.created_at,
+      updated_at: post.updated_at,
+      User: {
+        id: post.userId,
+        nickname: post.nickname,
+        profile_image_url: post.profile_image_url,
+      },
+    }));
+    const totalCount = result.length;
     const totalPages = Math.round(totalCount / size);
 
     setTimeout(() => {
       return res.status(200).json({
-        contents: data.slice(page * size, (page + 1) * size),
+        contents: result.slice(page * size, (page + 1) * size),
         pageNumber: page,
         pageSize: size,
         totalPages,
@@ -53,7 +68,7 @@ export async function getPost(req, res, next) {
   const conn = await db.getConnection();
   try {
     const result = {};
-    const [post, likers, parentComments, childComments, files] = await Promise.all([
+    let [post, Likers, Comments, childComments, Images] = await Promise.all([
       postRepository.getById(conn, postId),
       likeRepository.getAll(conn, postId),
       commentRepository.getParentComments(conn, postId),
@@ -61,12 +76,40 @@ export async function getPost(req, res, next) {
       fileRepository.getAll(conn, postId),
     ]);
 
-    parentComments.map((parent) => {
-      parent.child = childComments.filter((el) => el.pid === parent.id);
-      return parent;
+    Comments = Comments.map((comment) => ({
+      id: comment.id,
+      content: comment.content,
+      pid: comment.pid,
+      created_at: comment.created_at,
+      updated_at: comment.updated_at,
+      User: {
+        id: comment.userId,
+        nickname: comment.nickname,
+        profile_image_url: comment.profile_image_url,
+      },
+    }));
+    childComments = childComments.map((comment) => ({
+      id: comment.id,
+      content: comment.content,
+      pid: comment.pid,
+      created_at: comment.created_at,
+      updated_at: comment.updated_at,
+      User: {
+        id: comment.userId,
+        nickname: comment.nickname,
+        profile_image_url: comment.profile_image_url,
+      },
+    }));
+
+    Comments.map((comment) => {
+      comment.Comments = childComments.filter((el) => el.pid === comment.id);
+      return comment;
     });
 
-    return res.status(200).json({ post, likers, parentComments, files });
+    post.Images = Images;
+    post.Likers = Likers;
+    post.Comments = Comments;
+    return res.status(200).json({ post });
   } catch (err) {
     return res.status(404).json(err);
   } finally {

@@ -2,9 +2,7 @@ import { USER_NUMBER } from '../controller/posts.js';
 import { time } from '../middlewares/upload.js';
 
 export async function getAll(conn, postId) {
-  return conn
-    .execute('SELECT md.src, md.user FROM MEDIA as md WHERE md.post = ?', [postId])
-    .then((result) => result[0]);
+  return conn.execute('SELECT md.src FROM MEDIA as md WHERE md.post = ?', [postId]).then((result) => result[0]);
 }
 
 export async function create(conn, file, postId) {
