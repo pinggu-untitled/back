@@ -13,29 +13,15 @@ const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
 
-postsRouter.post(
-  '/',
-  upload.none(),
-  // createPostValidator,
-  postsController.createPost,
-);
+postsRouter.post('/', upload.none(), createPostValidator, postsController.createPost);
 
 postsRouter.post('/images', upload.array('images'), postsController.createMedia);
 postsRouter.get('/:postId', postsController.getPost);
-postsRouter.patch(
-  '/:postId', //
-  // updatePostValidator,
-  postsController.updatePost,
-);
+postsRouter.patch('/:postId', updatePostValidator, postsController.updatePost);
 postsRouter.delete('/:postId', postsController.removePost);
 
 postsRouter.get('/:postId/comments', commentController.getComment);
-postsRouter.post(
-  '/:postId/comments',
-  // upload.array('files'),
-  createCommentValidator,
-  commentController.createComment,
-);
+postsRouter.post('/:postId/comments', createCommentValidator, commentController.createComment);
 postsRouter.patch('/:postId/comments/:commentId', updateCommentValidator, commentController.updateComment);
 postsRouter.delete('/:postId/comments/:commentId', commentController.removeComment);
 
