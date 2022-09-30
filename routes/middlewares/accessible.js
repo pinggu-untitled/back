@@ -1,7 +1,7 @@
-import db from '../models/index.js';
+import db from '../../models/index.js';
 const { MyPings, Post } = db;
 
-export const isPrivate = async (req, res, next) => {
+export const isAccessible = async (req, res, next) => {
   try {
     let result;
     if (req.originalUrl.includes('posts')) {
