@@ -62,6 +62,7 @@ export async function getPosts(req, res, next) {
   }
 }
 
+//FIXME Mention, Hashtag 넣어주기
 export async function getPost(req, res, next) {
   console.log('hello');
   const { postId } = req.params;
@@ -144,6 +145,7 @@ export async function createMedia(req, res, next) {
   return res.status(200).json(images.map((el) => el.filename));
 }
 
+//FIXME Patch 수정하기
 export async function updatePost(req, res, next) {
   const { post, mentions, hashtags } = req.body;
 
@@ -167,6 +169,10 @@ export async function removePost(req, res, next) {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
+    const post = await postRepository.getById(conn, postId);
+    if (!post) {
+      return res.sendStatus(404);
+    }
     await postRepository.remove(conn, postId);
     await conn.commit();
     return res.status(200).json({ message: 'deleted' });
