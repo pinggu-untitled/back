@@ -28,7 +28,10 @@ export async function remove(conn, commentId) {
 
 export async function getParentComments(conn, postId) {
   return conn
-    .execute('SELECT * FROM COMMENT WHERE COMMENT.pid is null and COMMENT.post = ?', [postId])
+    .execute(
+      'SELECT cm.*, us.nickname, us.profile_image_url FROM COMMENT as cm join USER as us on cm.user = us.id WHERE cm.pid is null and cm.post = ?',
+      [postId],
+    )
     .then((result) => result[0]);
 }
 
