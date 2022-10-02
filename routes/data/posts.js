@@ -1,6 +1,8 @@
 import { USER_NUMBER } from '../controller/posts.js';
 import * as fileRepository from './file.js';
 
+// FIXME 추후 모든 게시물에 대해 req.user 적용시켜주기
+
 // 모든 게시물
 export async function getAll(conn) {
   return conn
@@ -120,4 +122,36 @@ export async function remove(conn, postId) {
   // );
   await conn.execute('DELETE FROM POST WHERE id = ?', [Number(postId)]);
   // await conn.execute('DELETE FROM POSTHASH WHERE post = ?', [Number(postId)]);
+}
+
+export async function getPostHashTags(conn, postId) {
+  const result = await conn
+    .execute(`SELECT ht.id, ht.content FROM POSTHASH as ph join HASHTAG ht on ph.hash = ht.id where ph.post = ?`, [
+      postId,
+    ])
+    .then((res) => res[0]);
+  return result;
+}
+
+export async function getPostMentions(conn, postId) {
+  const data = await conn
+    .execute(`select mt.id, mt.sender, mt.receiver from MENTION as mt where mt.post = ? and comment is null`, [postId])
+    .then((res) => res[0]);
+
+  // FIXME sender => req.user
+  const sender = await conn
+    .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [5])
+    .then((res) => res[0][0]);
+  console.log(sender);
+  console.log(data);
+  const result = await Promise.all(
+    data.map(async (el) => {
+      el.sender = sender;
+      el.receiver = await conn
+        .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [el.receiver])
+        .then((res) => res[0][0]);
+      return el;
+    }),
+  );
+  return result;
 }

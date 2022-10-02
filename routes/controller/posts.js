@@ -76,7 +76,10 @@ export async function getPost(req, res, next) {
       commentRepository.getChildComments(conn, postId),
       fileRepository.getAll(conn, postId),
     ]);
-
+    const { userId, nickname, profile_image_url } = post;
+    post.userId = undefined;
+    post.nickname = undefined;
+    post.profile_image_url = undefined;
     Comments = Comments.map((comment) => ({
       id: comment.id,
       content: comment.content,
@@ -101,15 +104,30 @@ export async function getPost(req, res, next) {
         profile_image_url: comment.profile_image_url,
       },
     }));
+    /**
+     * interface IHashtag {
+   id: number;
+  content: string;
+ }
+
+interface IPostMention {
+   id: number;
+   Sender: IUser;
+   Receiver: IUser;
+ }
+     */
 
     Comments.map((comment) => {
       comment.Comments = childComments.filter((el) => el.pid === comment.id);
       return comment;
     });
 
+    post.Hashtags = await postRepository.getPostHashTags(conn, postId);
+    post.Mentions = await postRepository.getPostMentions(conn, postId);
     post.Images = Images;
-    post.Likers = Likers;
+    post.User = { id: userId, nickname, profile_image_url };
     post.Comments = Comments;
+    post.Likers = Likers;
     return res.status(200).json({ post });
   } catch (err) {
     return res.status(404).json(err);
