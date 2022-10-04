@@ -15,6 +15,7 @@ export const validate = (req, res, next) => {
 
 export const createPostValidator = [
   body('title').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
+  body('content').trim(),
   body('longitude')
     .custom((value) => LON_PATTERN.test(value))
     .withMessage('올바른 형식이 아닙니다!'),
@@ -25,9 +26,14 @@ export const createPostValidator = [
 ];
 
 export const updatePostValidator = [
-  body('title').trim().isLength({ min: 1 }),
-  body('longitude').custom((value) => LON_PATTERN.test(value)),
-  body('latitude').custom((value) => LAT_PATTERN.test(value)),
+  body('title').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
+  body('content').trim(),
+  body('longitude')
+    .custom((value) => LON_PATTERN.test(value))
+    .withMessage('올바른 형식이 아닙니다!'),
+  body('latitude')
+    .custom((value) => LAT_PATTERN.test(value))
+    .withMessage('올바른 형식이 아닙니다!'),
   validate,
 ];
 

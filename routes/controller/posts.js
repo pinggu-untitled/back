@@ -8,11 +8,9 @@ export const rand = (start, end) => {
 export const USER_NUMBER = rand(1, 10);
 
 export async function getPosts(req, res, next) {
-  console.log('hello');
   const conn = await db.getConnection();
   const size = Number(req.query.size);
   const page = Number(req.query.page);
-  console.log('hello@@');
 
   try {
     /**
@@ -150,17 +148,40 @@ export async function createMedia(req, res, next) {
   return res.status(200).json(images.map((el) => el.filename));
 }
 
-//FIXME Patch 수정하기
-export async function updatePost(req, res, next) {
-  const { post, mentions, hashtags } = req.body;
+// //FIXME Patch 수정하기
+// export async function updatePost(req, res, next) {
+//   const { post, mentions, hashtags } = req.body;
 
+//   const conn = await db.getConnection();
+//   try {
+//     await conn.beginTransaction();
+//     const updatePost = await postRepository.update(conn, post, mentions, hashtags, req.params.postId);
+
+//     await conn.commit();
+//     return res.status(201).json(updatePost);
+//   } catch (err) {
+//     await conn.rollback();
+//     return res.status(500).json(err);
+//   } finally {
+//     conn.release();
+//   }
+// }
+
+export async function updatePost(req, res, next) {
+  const { postId } = req.params;
+  const { title, content, longitude, latitude, is_private } = req.body;
+  const { mentions, hashtags, images } = req.body;
+  const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
-    const updatePost = await postRepository.update(conn, post, mentions, hashtags, req.params.postId);
+    const newPost = await postRepository
+      .update(conn, postId, post, mentions, hashtags, images)
+      .then((result) => result)
+      .catch(console.error);
 
     await conn.commit();
-    return res.status(201).json(updatePost);
+    return res.status(201).json(newPost);
   } catch (err) {
     await conn.rollback();
     return res.status(500).json(err);
