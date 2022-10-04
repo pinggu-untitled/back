@@ -62,7 +62,6 @@ export async function getPosts(req, res, next) {
   }
 }
 
-//FIXME Mention, Hashtag 넣어주기
 export async function getPost(req, res, next) {
   console.log('hello');
   const { postId } = req.params;
@@ -104,18 +103,6 @@ export async function getPost(req, res, next) {
         profile_image_url: comment.profile_image_url,
       },
     }));
-    /**
-     * interface IHashtag {
-   id: number;
-  content: string;
- }
-
-interface IPostMention {
-   id: number;
-   Sender: IUser;
-   Receiver: IUser;
- }
-     */
 
     Comments.map((comment) => {
       comment.Comments = childComments.filter((el) => el.pid === comment.id);

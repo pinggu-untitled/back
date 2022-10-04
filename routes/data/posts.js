@@ -32,7 +32,6 @@ export async function getById(conn, postId) {
 }
 
 export async function create(conn, post, mentions, hashtags, images) {
-  console.log('######################');
   const newPost = await conn
     .execute(
       `INSERT into POST (user, title, content, longitude, latitude, is_private) values (${USER_NUMBER}, ?, ?, ?, ?, ?)`,
@@ -41,7 +40,6 @@ export async function create(conn, post, mentions, hashtags, images) {
     .then((result) => getById(conn, result[0].insertId));
 
   for (const hashtag of hashtags) {
-    hashtag;
     const hashExist = await conn
       .execute(`SELECT COUNT(*) as count FROM HASHTAG WHERE content = '${hashtag.content}'`)
       .then((result) => result[0][0].count);

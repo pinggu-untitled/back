@@ -15,19 +15,19 @@ export const validate = (req, res, next) => {
 
 export const createPostValidator = [
   body('post.title').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
-  body('post.content').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
+  // body('post.content').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
   body('post.longitude')
     .custom((value) => LON_PATTERN.test(value))
     .withMessage('올바른 형식이 아닙니다!'),
   body('post.latitude')
     .custom((value) => LAT_PATTERN.test(value))
     .withMessage('올바른 형식이 아닙니다!'),
-  body('mentions')
-    .custom((value) => value.every((el) => el.user !== ''))
-    .withMessage('대상을 입력해주세요!'),
-  body('hashtags')
-    .custom((value) => value.every((el) => el.content !== ''))
-    .withMessage('해쉬태그 내용을 입력해주세요!'),
+  // body('mentions')
+  //   .custom((value) => value.every((el) => el.user !== ''))
+  //   .withMessage('대상을 입력해주세요!'),
+  // body('hashtags')
+  //   .custom((value) => value.every((el) => el.content !== ''))
+  //   .withMessage('해쉬태그 내용을 입력해주세요!'),
   validate,
 ];
 
