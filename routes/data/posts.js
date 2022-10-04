@@ -35,7 +35,7 @@ export async function create(conn, post, mentions, hashtags, images) {
   const newPost = await conn
     .execute(
       `INSERT into POST (user, title, content, longitude, latitude, is_private) values (${USER_NUMBER}, ?, ?, ?, ?, ?)`,
-      [post.title, post.content, post.longitude, post.latitude, post.is_private ? 1 : 0],
+      [post.title, post.content === '' ? null : post.content, post.longitude, post.latitude, post.is_private ? 1 : 0],
     )
     .then((result) => getById(conn, result[0].insertId));
   if (hashtags && hashtags.length !== 0) {
@@ -51,9 +51,8 @@ export async function create(conn, post, mentions, hashtags, images) {
       const hashtagId = await conn
         .execute(`SELECT id FROM HASHTAG WHERE content = ?`, [hashtag.content])
         .then((result) => result[0][0]);
+      await conn.execute(`INSERT into POSTHASH (post, hash) values (?, ?)`, [Number(newPost.id), Number(hashtagId.id)]);
     }
-
-    await conn.execute(`INSERT into POSTHASH (post, hash) values (?, ?)`, [Number(newPost.id), Number(hashtagId.id)]);
   }
   if (mentions && mentions.length !== 0) {
     for (const mention of mentions) {
