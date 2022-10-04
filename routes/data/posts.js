@@ -38,31 +38,32 @@ export async function create(conn, post, mentions, hashtags, images) {
       [post.title, post.content, post.longitude, post.latitude, post.is_private ? 1 : 0],
     )
     .then((result) => getById(conn, result[0].insertId));
+  if (hashtags && hashtags.length !== 0) {
+    for (const hashtag of hashtags) {
+      const hashExist = await conn
+        .execute(`SELECT COUNT(*) as count FROM HASHTAG WHERE content = '${hashtag.content}'`)
+        .then((result) => result[0][0].count);
 
-  for (const hashtag of hashtags) {
-    const hashExist = await conn
-      .execute(`SELECT COUNT(*) as count FROM HASHTAG WHERE content = '${hashtag.content}'`)
-      .then((result) => result[0][0].count);
+      if (hashExist === 0) {
+        await conn.execute(`INSERT into HASHTAG (content) values (?)`, [hashtag.content]);
+      }
 
-    if (hashExist === 0) {
-      await conn.execute(`INSERT into HASHTAG (content) values (?)`, [hashtag.content]);
+      const hashtagId = await conn
+        .execute(`SELECT id FROM HASHTAG WHERE content = ?`, [hashtag.content])
+        .then((result) => result[0][0]);
     }
-
-    const hashtagId = await conn
-      .execute(`SELECT id FROM HASHTAG WHERE content = ?`, [hashtag.content])
-      .then((result) => result[0][0]);
 
     await conn.execute(`INSERT into POSTHASH (post, hash) values (?, ?)`, [Number(newPost.id), Number(hashtagId.id)]);
   }
-
-  for (const mention of mentions) {
-    await conn.execute(`INSERT into MENTION (post, sender, receiver) values (?, ?, ?)`, [
-      Number(newPost.id),
-      Number(USER_NUMBER),
-      Number(mention.receiver),
-    ]);
+  if (mentions && mentions.length !== 0) {
+    for (const mention of mentions) {
+      await conn.execute(`INSERT into MENTION (post, sender, receiver) values (?, ?, ?)`, [
+        Number(newPost.id),
+        Number(USER_NUMBER),
+        Number(mention.receiver),
+      ]);
+    }
   }
-  console.log(images);
   if (images.length !== 0) {
     images.map(async (image) => {
       await fileRepository.create(conn, image, newPost.id);

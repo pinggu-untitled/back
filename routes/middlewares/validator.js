@@ -14,12 +14,12 @@ export const validate = (req, res, next) => {
 };
 
 export const createPostValidator = [
-  body('post.title').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
+  body('title').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
   // body('post.content').trim().isLength({ min: 1 }).withMessage('한 글자 이상 입력해주세요!'),
-  body('post.longitude')
+  body('longitude')
     .custom((value) => LON_PATTERN.test(value))
     .withMessage('올바른 형식이 아닙니다!'),
-  body('post.latitude')
+  body('latitude')
     .custom((value) => LAT_PATTERN.test(value))
     .withMessage('올바른 형식이 아닙니다!'),
   // body('mentions')
