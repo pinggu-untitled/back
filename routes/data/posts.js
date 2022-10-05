@@ -127,6 +127,8 @@ export async function update(conn, postId, post, mentions, hashtags, images) {
     images?.map(async (image) => {
       await fileRepository.create(conn, image, updatePost.id);
     });
+  } else {
+    await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [postId]);
   }
 
   return updatePost;
