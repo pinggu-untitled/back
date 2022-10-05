@@ -1,7 +1,7 @@
 import express from 'express';
 import Sequelize from 'sequelize';
-import db from '../models/index.js';
-import { isAccessible } from './middlewares/accessible.js';
+import db from '../../models/index.js';
+import { isAccessible } from '../middlewares/accessible.js';
 const { MyPings, SharePings, MyPingsPost, Post, sequelize } = db;
 const { Op } = Sequelize;
 
