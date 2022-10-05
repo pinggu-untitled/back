@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Media = sequelize.define(
-    'Media', // images 테이블 생성
+    'Media',
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
