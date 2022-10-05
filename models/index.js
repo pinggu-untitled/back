@@ -26,12 +26,7 @@ import user from './user.js';
 const env = process.env.NODE_ENV || 'development';
 import config from '../config/config.js';
 const conf = config[env];
-const sequelize = new Sequelize(
-  conf.database,
-  conf.username,
-  conf.password,
-  conf
-);
+const sequelize = new Sequelize(conf.database, conf.username, conf.password, conf);
 
 const db = {};
 db.Admin = admin(sequelize, Sequelize);
