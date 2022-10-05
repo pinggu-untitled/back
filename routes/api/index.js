@@ -1,17 +1,18 @@
 import { Router } from 'express';
-import users from './users.js';
+import auth from './auth.js';
+import user from './user.js';
+import follow from './follow.js';
+import mypings from './mypings.js';
 import posts from './posts.js';
-import chatrooms from './chatrooms.js';
-import notifications from './notifications.js';
 import searchHistories from './searchHistories.js';
-import results from './results.js';
 
 const router = Router();
 
-router.use('/users', users);
+router.use('/auth', auth);
+router.use('/users', user);
+router.use('/follow', follow);
+router.use('/mypings', mypings);
 router.use('/posts', posts);
 router.use('/search_histories', searchHistories);
-router.use('/results', results);
-router.use('/chatrooms', chatrooms);
 
 export default router;

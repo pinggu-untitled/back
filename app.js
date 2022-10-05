@@ -54,7 +54,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 const sessionOption = {
   resave: false,
   saveUninitialized: false,
-  secret: process.env.COOKIE_SECRET, // cookie_secret + cookie 값 => session 유저 데이터 복원
+  secret: process.env.COOKIE_SECRET,
   httpOnly: true,
 };
 
@@ -63,9 +63,9 @@ if (prod) {
   sessionOption.cookie.proxy = true;
 }
 
-// app.use(session(sessionOption));
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(session(sessionOption));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', apiRouter); //api 주소가 아닌 경우, react 가 구동되는 index.html 파일로 이동
 

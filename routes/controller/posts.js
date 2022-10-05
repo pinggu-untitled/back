@@ -143,6 +143,19 @@ export async function createPost(req, res, next) {
   }
 }
 
+// export async function createMedia(req, res, next) {
+//   const { postId } = req.data;
+//   const { files } = req.files;
+//   const conn = await db.getConnection();
+//   try {
+//     await postRepository.createMedia(conn, files, postId);
+//     return res.status(201).json({ message: 'success' });
+//   } catch (err) {
+//     return res.status(500).json(err);
+//   } finally {
+//     conn.release();
+//   }
+// }
 export async function createMedia(req, res, next) {
   const images = req.files;
   return res.status(200).json(images.map((el) => el.filename));
