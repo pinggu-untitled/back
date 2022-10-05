@@ -45,13 +45,9 @@ export default (sequelize, DataTypes) => {
       tableName: 'USER',
       timestamps: true,
       underscored: true,
-<<<<<<< HEAD
       paranoid: false,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-=======
-      paranoid: true,
->>>>>>> 3fdb97e0b948b196fdcf61b1f3dcf8f75d30a575
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,
