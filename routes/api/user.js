@@ -16,16 +16,6 @@ router.get('/me', (req, res) => {
     res.status(500).json(null);
 });
 
-/* 모든 사용자 정보 가져오기 */
-router.get('/all', (req, res) => {
-  User.findAll({ attributes: ['id', 'nickname', 'profile_image_url']})
-    .then(users => res.status(200).json(users))
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ message: 'fail' });
-    });
-})
-
 /* 사용자 정보 가져오기 */
 router.get('/:userId', (req, res) => {
   User.findOne({
