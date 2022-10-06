@@ -32,6 +32,7 @@ router.get('/:userId', (req, res) => {
   });
 });
 
+
 /* 팔로워 목록 가져오기 */
 router.get('/:userId/followers', async (req, res) => {
   const query = 'SELECT USER.id, USER.nickname, USER.profile_image_url FROM USER INNER JOIN FOLLOW ON (FOLLOW.host=USER.id) WHERE FOLLOW.follow=:userId';
