@@ -158,7 +158,11 @@ export async function createPost(req, res, next) {
 // }
 export async function createMedia(req, res, next) {
   const images = req.files;
-  return res.status(200).json(images.map((el) => el.filename));
+  const currentFile = Object.values(req.body);
+  const result = images.map((el) => el.filename);
+  result.push(...currentFile);
+  console.log(result);
+  return res.status(200).json(result);
 }
 
 // //FIXME Patch 수정하기
