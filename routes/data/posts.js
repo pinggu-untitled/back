@@ -11,7 +11,7 @@ export async function getAll(conn) {
     )
     .then((result) => result[0]);
 }
-// follwing 한 사람들 게시물로 조건 걸기
+// follwing 한 사람들 게시물 쿼리
 export async function getFollowing(conn) {
   return conn
     .execute(
@@ -20,7 +20,7 @@ export async function getFollowing(conn) {
     .then((result) => result[0]);
 }
 
-// 댓글, 멘션도 같이 넘겨주기
+// 특정 게시물 쿼리
 export async function getById(conn, postId) {
   conn.execute('UPDATE POST SET hits = hits + 1 where id = ?', [postId]);
   return conn //
@@ -31,6 +31,7 @@ export async function getById(conn, postId) {
     .then((result) => result[0][0]);
 }
 
+// 게시물 생성 쿼리
 export async function create(conn, post, mentions, hashtags, images) {
   console.log(post);
   const newPost = await conn
@@ -78,6 +79,7 @@ export async function create(conn, post, mentions, hashtags, images) {
   return newPost;
 }
 
+// 특정 게시물 수정
 export async function update(conn, postId, post, mentions, hashtags, images) {
   console.log(post);
   const updatePost = await conn
@@ -134,51 +136,13 @@ export async function update(conn, postId, post, mentions, hashtags, images) {
   return updatePost;
 }
 
-// export async function update(conn, post, mentions, hashtags, postId, files) {
-//   const updatePost = await conn
-//     .execute(`UPDATE POST set title = ?, content = ?, longitude = ?, latitude = ?, is_private = ? WHERE id = ?`, [
-//       post.title,
-//       post.content,
-//       post.longitude,
-//       post.latitude,
-//       post.is_private ? 1 : 0,
-//       postId,
-//     ])
-//     .then(() => getById(conn, postId));
-
-//   await conn.execute(`DELETE FROM MENTION WHERE MENTION.post = ?`, [Number(postId)]);
-//   await conn.execute('DELETE FROM POSTHASH WHERE post = ?', [Number(postId)]);
-
-//   for (const hashtag of hashtags) {
-//     const hashExist = await conn
-//       .execute(`SELECT COUNT(*) as count FROM HASHTAG WHERE content = '${hashtag.content}'`)
-//       .then((result) => result[0][0].count);
-
-//     if (hashExist === 0) {
-//       await conn.execute(`INSERT into HASHTAG (content) values (?)`, [hashtag.content]);
-//     }
-//     const hashtagId = await conn
-//       .execute(`SELECT id FROM HASHTAG WHERE content = ?`, [hashtag.content])
-//       .then((result) => result[0][0]);
-//     await conn.execute(`INSERT into POSTHASH (post, hash) values (?, ?)`, [Number(postId), Number(hashtagId.id)]);
-//   }
-
-//   for (const mention of mentions) {
-//     await conn.execute(`INSERT into MENTION (post, sender, receiver) values (?, ?, ?)`, [
-//       Number(postId),
-//       USER_NUMBER,
-//       Number(mention.receiver),
-//     ]);
-//   }
-
-//   return updatePost;
-// }
-
+// 특정 게시물 삭제
 export async function remove(conn, postId) {
   await conn.execute('DELETE FROM POST WHERE id = ?', [Number(postId)]).catch(console.error);
   await conn.execute('UPDATE MEDIA SET post = null where post = ?', [postId]).catch(console.error);
 }
 
+// 게시물 해시태그 가져오기
 export async function getPostHashTags(conn, postId) {
   const result = await conn
     .execute(`SELECT ht.id, ht.content FROM POSTHASH as ph join HASHTAG ht on ph.hash = ht.id where ph.post = ?`, [
@@ -189,6 +153,7 @@ export async function getPostHashTags(conn, postId) {
   return result;
 }
 
+// 게시물 멘션 가져오기
 export async function getPostMentions(conn, postId) {
   const data = await conn
     .execute(`select mt.id, mt.sender, mt.receiver from MENTION as mt where mt.post = ? and comment is null`, [postId])
