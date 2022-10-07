@@ -10,11 +10,13 @@ export async function create(conn, pid, postId, content) {
   //       [Number(pid)]
   //     );
   //   }
-  return await conn.execute(`INSERT into COMMENT (user, post, pid, content) values (${USER_NUMBER}, ?, ?, ?)`, [
-    Number(postId),
-    Number(pid) ? Number(pid) : null,
-    content,
-  ]);
+  return await conn
+    .execute(`INSERT into COMMENT (user, post, pid, content) values (${USER_NUMBER}, ?, ?, ?)`, [
+      Number(postId),
+      Number(pid) ? Number(pid) : null,
+      content,
+    ])
+    .then((res) => res[0].insertId);
 }
 export async function update(conn, content, commentId) {
   return conn.execute(`UPDATE COMMENT set content = ? WHERE COMMENT.id = ?`, [content, Number(commentId)]);

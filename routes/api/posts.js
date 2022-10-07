@@ -1,17 +1,13 @@
 import express, { json } from 'express';
 import {} from 'express-async-errors';
-import {
-  createCommentValidator,
-  createPostValidator,
-  updateCommentValidator,
-  updatePostValidator,
-} from '../middlewares/validator.js';
+import { commentValidator, createPostValidator, updatePostValidator } from '../middlewares/validator.js';
 import { postsController, commentController, likedController } from '../controller/index.js';
 import { upload } from '../middlewares/upload.js';
 
 const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
+postsRouter.get('/all', postsController.getAllTest);
 
 postsRouter.post('/', upload.none(), createPostValidator, postsController.createPost);
 
@@ -21,8 +17,8 @@ postsRouter.patch('/:postId', updatePostValidator, postsController.updatePost);
 postsRouter.delete('/:postId', postsController.removePost);
 
 postsRouter.get('/:postId/comments', commentController.getComment);
-postsRouter.post('/:postId/comments', createCommentValidator, commentController.createComment);
-postsRouter.patch('/:postId/comments/:commentId', updateCommentValidator, commentController.updateComment);
+postsRouter.post('/:postId/comments', commentValidator, commentController.createComment);
+postsRouter.patch('/:postId/comments/:commentId', commentValidator, commentController.updateComment);
 postsRouter.delete('/:postId/comments/:commentId', commentController.removeComment);
 
 postsRouter.get('/:postId/liked', likedController.getLiked);

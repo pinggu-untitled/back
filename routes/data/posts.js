@@ -7,7 +7,7 @@ import * as fileRepository from './file.js';
 export async function getAll(conn) {
   return conn
     .execute(
-      'SELECT po.id, po.user, po.created_at, po.updated_at, po.title, po.content, po.longitude, po.latitude, po.hits, us.nickname FROM POST as po join USER as us on po.user = us.id ORDER BY po.created_at desc',
+      'SELECT po.id, po.user, po.created_at, po.updated_at, po.title, po.content, po.longitude, po.latitude, po.hits, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id ORDER BY po.created_at desc',
     )
     .then((result) => result[0]);
 }

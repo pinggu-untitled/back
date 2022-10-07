@@ -8,6 +8,35 @@ export const rand = (start, end) => {
 // 로그인 기능 합치기 전 랜덤 유저 id 뽑기
 export const USER_NUMBER = rand(1, 10);
 
+export async function getAllTest(req, res, next) {
+  const conn = await db.getConnection();
+
+  try {
+    const data = await postRepository.getAll(conn);
+    const result = data.map((post) => ({
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      longitude: post.longitude,
+      latitude: post.latitude,
+      hits: post.hits,
+      is_private: post.is_private,
+      created_at: post.created_at,
+      updated_at: post.updated_at,
+      User: {
+        id: post.userId,
+        nickname: post.nickname,
+        profile_image_url: post.profile_image_url,
+      },
+    }));
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(404).json(err);
+  } finally {
+    conn.release();
+  }
+}
+
 // 팔로우 한 사람들 게시물 모두 가져오기
 export async function getPosts(req, res, next) {
   const conn = await db.getConnection();
