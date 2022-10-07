@@ -37,6 +37,7 @@ export const updatePostValidator = [
   validate,
 ];
 
-export const createCommentValidator = [body('content').trim().isEmpty().withMessage('내용을 입력해주세요!'), validate];
-
-export const updateCommentValidator = [body('content').trim().isEmpty().withMessage('내용을 입력해주세요!'), validate];
+export const commentValidator = [
+  body('content').trim().isLength({ min: 1 }).withMessage('내용을 입력해주세요!'),
+  validate,
+];
