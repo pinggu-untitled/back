@@ -8,11 +8,13 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import helmet from 'helmet';
 import passport from 'passport';
+
+dotenv.config();
 import db from './models/index.js';
 import passportConfig from './passport/index.js';
 import apiRouter from './routes/api/index.js';
-
-dotenv.config();
+import { makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
+import { time } from './routes/middlewares/upload.js';
 // const webSocket = require("./socket");
 
 const app = express();
@@ -44,7 +46,7 @@ if (prod) {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '/uploads/images')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -65,7 +67,7 @@ app.use(session(sessionOption));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', apiRouter);
+app.use('/', apiRouter); //api 주소가 아닌 경우, react 가 구동되는 index.html 파일로 이동
 
 app.use((err, req, res, next) => {
   return res.send(err);
@@ -78,3 +80,6 @@ app.get('*', (req, res, next) => {
 app.listen(app.get('PORT'), () => console.log(`✅ Express 서버 구동 중 http://localhost:${app.get('PORT')}`));
 
 // webSocket(server, app)
+
+makeFolder(`./uploads/images/${time.year}/${time.month}/${time.date}`);
+makeFolderScheduler();

@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Media = sequelize.define(
-    'Media', // images 테이블 생성
+    'Media',
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -24,7 +24,7 @@ export default (sequelize, DataTypes) => {
       charset: 'utf8',
       collate: 'utf8_general_ci',
       sequelize,
-    }
+    },
   );
   Media.associate = (db) => {
     db.Media.belongsTo(db.Post, { foreignKey: 'post' });

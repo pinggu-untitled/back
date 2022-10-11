@@ -45,7 +45,7 @@ export default (sequelize, DataTypes) => {
       charset: 'utf8mb4',
       collate: 'utf8mb4_general_ci',
       sequelize,
-    }
+    },
   );
   Post.associate = (db) => {
     db.Post.belongsTo(db.User, { foreignKey: 'user' });
