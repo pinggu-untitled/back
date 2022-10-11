@@ -7,10 +7,12 @@ import posts from './posts.js';
 import results from './results.js';
 import searchHistories from './searchHistories.js';
 import followingPosts from './followingPosts.js';
+import profile from './profile.js';
 
 const router = Router();
 
 router.use('/auth', auth);
+router.use('/profile', profile);
 router.use('/users', user);
 router.use('/follow', follow);
 router.use('/mypings', mypings);
