@@ -15,6 +15,7 @@ import passportConfig from './passport/index.js';
 import apiRouter from './routes/api/index.js';
 import { makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
 import { time } from './routes/middlewares/upload.js';
+import logger from './config/logger.js';
 // const webSocket = require("./socket");
 
 const app = express();
@@ -34,6 +35,7 @@ if (prod) {
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(hpp());
 } else {
+  logger.log('info', 'hello');
   app.use(morgan('dev'));
   app.use(
     cors({
