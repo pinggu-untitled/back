@@ -22,11 +22,11 @@ export async function getFollowing(conn) {
 
 // 특정 게시물 쿼리
 export async function getById(conn, postId) {
-  conn.execute('UPDATE POST SET hits = hits + 1 where id = ?', [postId]);
+  conn.execute('UPDATE POST SET hits = hits + 1 where id = ?', [Number(postId)]);
   return conn //
     .execute(
       'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private,  po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id WHERE po.id = ? ORDER BY po.created_at desc',
-      [postId],
+      [Number(postId)],
     )
     .then((result) => result[0][0]);
 }
@@ -130,7 +130,7 @@ export async function update(conn, postId, post, mentions, hashtags, images) {
       await fileRepository.create(conn, image, updatePost.id);
     });
   } else {
-    await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [postId]);
+    await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [Number(postId)]);
   }
 
   return updatePost;
@@ -139,14 +139,14 @@ export async function update(conn, postId, post, mentions, hashtags, images) {
 // 특정 게시물 삭제
 export async function remove(conn, postId) {
   await conn.execute('DELETE FROM POST WHERE id = ?', [Number(postId)]).catch(console.error);
-  await conn.execute('UPDATE MEDIA SET post = null where post = ?', [postId]).catch(console.error);
+  await conn.execute('UPDATE MEDIA SET post = null where post = ?', [Number(postId)]).catch(console.error);
 }
 
 // 게시물 해시태그 가져오기
 export async function getPostHashTags(conn, postId) {
   const result = await conn
     .execute(`SELECT ht.id, ht.content FROM POSTHASH as ph join HASHTAG ht on ph.hash = ht.id where ph.post = ?`, [
-      postId,
+      Number(postId),
     ])
     .then((res) => res[0])
     .catch(console.error);
@@ -156,7 +156,9 @@ export async function getPostHashTags(conn, postId) {
 // 게시물 멘션 가져오기
 export async function getPostMentions(conn, postId) {
   const data = await conn
-    .execute(`select mt.id, mt.sender, mt.receiver from MENTION as mt where mt.post = ? and comment is null`, [postId])
+    .execute(`select mt.id, mt.sender, mt.receiver from MENTION as mt where mt.post = ? and comment is null`, [
+      Number(postId),
+    ])
     .then((res) => res[0])
     .catch(console.error);
 
@@ -168,7 +170,9 @@ export async function getPostMentions(conn, postId) {
     data.map(async (el) => {
       el.sender = sender;
       el.receiver = await conn
-        .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [el.receiver])
+        .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [
+          Number(el.receiver),
+        ])
         .then((res) => res[0][0])
         .catch(console.error);
       return el;

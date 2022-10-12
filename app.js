@@ -35,7 +35,6 @@ if (prod) {
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(hpp());
 } else {
-  logger.log('info', 'hello');
   app.use(morgan('dev'));
   app.use(
     cors({

@@ -32,7 +32,7 @@ export async function getParentComments(conn, postId) {
   return conn
     .execute(
       'SELECT cm.id, cm.content, cm.pid, cm.created_at, cm.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM COMMENT as cm join USER as us on cm.user = us.id WHERE cm.pid is null and cm.post = ?',
-      [postId],
+      [Number(postId)],
     )
     .then((result) => result[0]);
 }
@@ -41,7 +41,7 @@ export async function getChildComments(conn, postId) {
   return conn
     .execute(
       'SELECT cm.id, cm.content, cm.pid, cm.created_at, cm.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM COMMENT as cm join USER as us on cm.user = us.id WHERE cm.post = ? and cm.pid is not null',
-      [postId],
+      [Number(postId)],
     )
     .then((result) => result[0]);
 }
