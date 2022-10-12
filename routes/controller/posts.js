@@ -1,5 +1,7 @@
 import { db } from '../../config/mysql.js';
 import { postRepository, likeRepository, commentRepository, fileRepository } from '../data/index.js';
+import logger from '../../config/logger.js';
+import requestIP from 'request-ip';
 
 export const rand = (start, end) => {
   return Math.floor(Math.random() * (end - start + 1)) + start;
@@ -9,6 +11,8 @@ export const rand = (start, end) => {
 export const USER_NUMBER = rand(1, 10);
 
 export async function getAllTest(req, res, next) {
+  const userIP = requestIP.getClientIp(req);
+  logger.info({ ip: userIP, method: 'GET', type: 'getAllTest' });
   const conn = await db.getConnection();
 
   try {
@@ -37,6 +41,7 @@ export async function getAllTest(req, res, next) {
     );
     return res.status(200).json(result);
   } catch (err) {
+    logger.error({ ip: userIP, method: 'GET', type: 'getAllTest' });
     return res.status(404).json(err);
   } finally {
     conn.release();
@@ -91,8 +96,8 @@ export async function getPosts(req, res, next) {
 export async function getPost(req, res, next) {
   const { postId } = req.params;
   const conn = await db.getConnection();
+  const userIP = requestIP.getClientIp(req);
   try {
-    const result = {};
     let [post, Likers, Comments, childComments, Images] = await Promise.all([
       postRepository.getById(conn, postId),
       likeRepository.getAll(conn, postId),
@@ -100,6 +105,11 @@ export async function getPost(req, res, next) {
       commentRepository.getChildComments(conn, postId),
       fileRepository.getAll(conn, postId),
     ]);
+
+    if (post === undefined) {
+      logger.error({ ip: userIP, method: 'GET', type: 'getAllTest' });
+      return res.status(404).json({ success: 'fail', message: '포스트가 존재하지 않습니다.' });
+    }
     const { userId, nickname, profile_image_url } = post;
     post.userId = undefined;
     post.nickname = undefined;
@@ -142,6 +152,7 @@ export async function getPost(req, res, next) {
     post.Likers = Likers;
     return res.status(200).json({ post });
   } catch (err) {
+    logger.error({ ip: userIP, method: 'GET', type: 'getAllTest' });
     return res.status(404).json(err);
   } finally {
     conn.release();
