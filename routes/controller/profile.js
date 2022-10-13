@@ -51,19 +51,19 @@ export async function updateProfileInfo(req, res, next) {
     req.session.passport.user.nickname = NEW_USER.nickname;
     req.session.passport.user.profile_image_url = NEW_USER.profile_image_url;
 
-    // console.log('req.session.passport.user.nickname :>> ', req.session.passport.user.nickname);
-    // console.log('req.session.passport.user.profile_image_url :>> ', req.session.passport.user.profile_image_url);
+    console.log('req.session.passport.user.nickname :>> ', req.session.passport.user.nickname);
+    console.log('req.session.passport.user.profile_image_url :>> ', req.session.passport.user.profile_image_url);
 
-    // console.log('isImage11 :>> ', isImage);
-    // console.log('fs.existsSync(NEW_USER.profile_image_url)11 :>> ', fs.existsSync(NEW_USER.profile_image_url));
+    console.log('isImage11 :>> ', isImage);
+    console.log('fs.existsSync(NEW_USER.profile_image_url)11 :>> ', fs.existsSync(NEW_USER.profile_image_url));
     if (isImage && fs.existsSync(NEW_USER.profile_image_url)) {
-      // console.log('isImage22 :>> ', isImage);
-      // console.log('fs.existsSync(NEW_USER.profile_image_url)22 :>> ', fs.existsSync(NEW_USER.profile_image_url));
+      console.log('isImage22 :>> ', isImage);
+      console.log('fs.existsSync(NEW_USER.profile_image_url)22 :>> ', fs.existsSync(NEW_USER.profile_image_url));
 
       // promise로 바꾸기 221006
       const deleteRes = await deleteFile(NEW_USER.profile_image_url);
       if(!deleteRes) {
-        // console.log('failed file name : ', NEW_USER.profile_image_url);
+        console.log('failed file name : ', NEW_USER.profile_image_url);
         throw new Error('delete file fail!!!');
       }
     }
@@ -78,6 +78,5 @@ export async function updateProfileInfo(req, res, next) {
 }
 
 export async function updateProfileImage(req, res, next) {
-  // console.log('req.file.filename', req.file.filename);
-  return res.status(200).json(req.file.name);
+  return res.status(200).json(req.file.filename);
 }
