@@ -81,7 +81,6 @@ export async function create(conn, post, mentions, hashtags, images) {
 
 // 특정 게시물 수정
 export async function update(conn, postId, post, mentions, hashtags, images) {
-  console.log(post);
   const updatePost = await conn
     .execute(`UPDATE POST SET title = ?, content = ?, longitude = ?, latitude = ?, is_private = ? WHERE id = ?`, [
       post.title,

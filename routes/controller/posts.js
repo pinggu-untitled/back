@@ -1,7 +1,6 @@
 import { db } from '../../config/mysql.js';
 import { postRepository, likeRepository, commentRepository, fileRepository } from '../data/index.js';
 import logger from '../../config/logger.js';
-import requestIP from 'request-ip';
 
 export const rand = (start, end) => {
   return Math.floor(Math.random() * (end - start + 1)) + start;
@@ -11,8 +10,6 @@ export const rand = (start, end) => {
 export const USER_NUMBER = rand(1, 10);
 
 export async function getAllTest(req, res, next) {
-  const userIP = requestIP.getClientIp(req);
-  logger.info({ ip: userIP, method: 'GET', type: 'getAllTest' });
   const conn = await db.getConnection();
 
   try {
@@ -39,10 +36,11 @@ export async function getAllTest(req, res, next) {
         };
       }),
     );
+
     return res.status(200).json(result);
   } catch (err) {
-    logger.error({ ip: userIP, method: 'GET', type: 'getAllTest' });
-    return res.status(404).json(err);
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }
@@ -86,7 +84,8 @@ export async function getPosts(req, res, next) {
       });
     }, 300);
   } catch (err) {
-    return res.status(404).json(err);
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }
@@ -96,7 +95,6 @@ export async function getPosts(req, res, next) {
 export async function getPost(req, res, next) {
   const { postId } = req.params;
   const conn = await db.getConnection();
-  const userIP = requestIP.getClientIp(req);
   try {
     let [post, Likers, Comments, childComments, Images] = await Promise.all([
       postRepository.getById(conn, postId),
@@ -106,10 +104,6 @@ export async function getPost(req, res, next) {
       fileRepository.getAll(conn, postId),
     ]);
 
-    if (post === undefined) {
-      logger.error({ ip: userIP, method: 'GET', type: 'getAllTest' });
-      return res.status(404).json({ success: 'fail', message: '포스트가 존재하지 않습니다.' });
-    }
     const { userId, nickname, profile_image_url } = post;
     post.userId = undefined;
     post.nickname = undefined;
@@ -152,8 +146,8 @@ export async function getPost(req, res, next) {
     post.Likers = Likers;
     return res.status(200).json({ post });
   } catch (err) {
-    logger.error({ ip: userIP, method: 'GET', type: 'getAllTest' });
-    return res.status(404).json(err);
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }
@@ -176,6 +170,7 @@ export async function createPost(req, res, next) {
     return res.status(201).json(newPost);
   } catch (err) {
     await conn.rollback();
+    logger.error(`Server Error`);
     return res.status(500).json(err);
   } finally {
     conn.release();
@@ -195,8 +190,7 @@ export async function createMedia(req, res, next) {
 // 게시물 수정하기
 export async function updatePost(req, res, next) {
   const { postId } = req.params;
-  const { title, content, longitude, latitude, is_private } = req.body;
-  const { mentions, hashtags, images } = req.body;
+  const { title, content, longitude, latitude, is_private, mentions, hashtags, images } = req.body;
   const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
   try {
@@ -210,6 +204,7 @@ export async function updatePost(req, res, next) {
     return res.status(201).json(newPost);
   } catch (err) {
     await conn.rollback();
+    logger.error(`Server Error`);
     return res.status(500).json(err);
   } finally {
     conn.release();
@@ -222,16 +217,13 @@ export async function removePost(req, res, next) {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
-    const post = await postRepository.getById(conn, postId);
-    if (!post) {
-      return res.sendStatus(404);
-    }
     await postRepository.remove(conn, postId);
     await conn.commit();
     return res.status(200).json({ message: 'deleted' });
   } catch (err) {
     await conn.rollback();
-    return res.status(400).json(err);
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }

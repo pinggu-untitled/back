@@ -4,12 +4,6 @@ export async function getAll(conn, postId) {
   return conn.execute(`SELECT * FROM COMMENT WHERE COMMENT.post = ?`, [Number(postId)]).then((result) => result[0]);
 }
 export async function create(conn, pid, postId, content) {
-  //   if (pid !== undefined) {
-  //     const comment = await conn.execute(
-  //       `SELECT * FROM COMMENT WHERE COMMENT.id = ?`,
-  //       [Number(pid)]
-  //     );
-  //   }
   return await conn
     .execute(`INSERT into COMMENT (user, post, pid, content) values (${USER_NUMBER}, ?, ?, ?)`, [
       Number(postId),
@@ -44,4 +38,12 @@ export async function getChildComments(conn, postId) {
       [Number(postId)],
     )
     .then((result) => result[0]);
+}
+
+export async function getComment(conn, commentId) {
+  return conn
+    .execute('SELECT cm.id, cm.content, cm.pid, cm.created_at, cm.updated_at FROM COMMENT as cm WHERE cm.id = ?', [
+      Number(commentId),
+    ])
+    .then((result) => result[0][0]);
 }

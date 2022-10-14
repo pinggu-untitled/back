@@ -15,8 +15,9 @@ import passportConfig from './passport/index.js';
 import apiRouter from './routes/api/index.js';
 import { makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
 import { time } from './routes/middlewares/upload.js';
-import logger from './config/logger.js';
 // const webSocket = require("./socket");
+import morganMiddleware from './routes/middlewares/morganmiddleware.js';
+import {} from 'express-async-errors';
 
 const app = express();
 app.set('PORT', process.env.PORT || 8080);
@@ -29,13 +30,12 @@ passportConfig();
 
 const prod = process.env.NODE_ENV === 'production';
 
+app.use(morganMiddleware);
 if (prod) {
   app.enable('trust proxy');
-  app.use(morgan('combined'));
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(hpp());
 } else {
-  app.use(morgan('dev'));
   app.use(
     cors({
       origin: 'http://localhost:3000',
