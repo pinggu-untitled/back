@@ -9,6 +9,7 @@ import searchHistories from './searchHistories.js';
 import followingPosts from './followingPosts.js';
 import {} from 'express-async-errors';
 import profile from './profile.js';
+import {} from 'express-async-errors';
 
 const router = Router();
 
