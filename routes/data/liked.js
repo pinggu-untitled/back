@@ -11,5 +11,5 @@ export async function create(conn, postId, userId) {
   return conn.execute('INSERT into LIKED (post, user) values (?, ?)', [Number(postId), userId]);
 }
 export async function remove(conn, postId, userId) {
-  return conn.execute('DELETE FROM LIKED WHERE post = ? and user = ?', [postId, userId]);
+  return conn.execute('DELETE FROM LIKED WHERE post = ? and user = ?', [Number(postId), userId]);
 }
