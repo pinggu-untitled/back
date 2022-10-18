@@ -8,6 +8,7 @@ import results from './results.js';
 import searchHistories from './searchHistories.js';
 import followingPosts from './followingPosts.js';
 import profile from './profile.js';
+import {} from 'express-async-errors';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/posts', posts);
 router.use('/results', results);
 router.use('/search_histories', searchHistories);
 router.use('/following', followingPosts);
+router.use('/profile', profile);
 
 export default router;

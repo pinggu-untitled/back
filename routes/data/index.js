@@ -6,4 +6,12 @@ import * as resultRepository from './result.js';
 import * as searchHistoryRepository from './searchHistories.js';
 import * as profileRepository from './profile.js';
 
-export { fileRepository, commentRepository, likeRepository, postRepository, resultRepository, searchHistoryRepository, profileRepository };
+export {
+  fileRepository,
+  commentRepository,
+  likeRepository,
+  postRepository,
+  resultRepository,
+  searchHistoryRepository,
+  profileRepository,
+};
