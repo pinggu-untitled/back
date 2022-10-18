@@ -16,7 +16,7 @@ export async function getAllTest(req, res, next) {
     const data = await postRepository.getAll(conn);
     const result = await Promise.all(
       data.map(async (post) => {
-        const Images = await fileRepository.getAll(conn, post.id).then((res) => res[0]);
+        const Images = await fileRepository.getAll(conn, post.id);
         return {
           id: post.id,
           title: post.title,
