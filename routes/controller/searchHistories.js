@@ -7,7 +7,8 @@ export async function getHistory(req, res, next) {
     const data = await searchHistoryRepository.getAll(conn);
     return res.status(200).json(data);
   } catch (err) {
-    return res.status(500).json({ message: `${err}` });
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }
@@ -23,7 +24,8 @@ export async function createHistory(req, res, next) {
     res.status(200).json({ message: 'created' });
   } catch (err) {
     await conn.rollback();
-    return res.status(400).json(err);
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }
@@ -36,7 +38,8 @@ export async function deleteHistoryAll(req, res, next) {
     await searchHistoryRepository.remove(conn);
     return res.status(200).json({ message: 'deleted' });
   } catch (err) {
-    return res.status(500).json({ message: `${err}` });
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }
@@ -49,7 +52,8 @@ export async function deleteHistoryById(req, res, next) {
     searchHistoryRepository.removeById(conn, historyId);
     return res.status(200).json({ message: 'deleted' });
   } catch (err) {
-    return res.status(500).json({ message: `${err}` });
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }
@@ -61,7 +65,8 @@ export async function getPopular(req, res, next) {
     const data = await searchHistoryRepository.getPopular(conn);
     return res.status(200).json(data);
   } catch (err) {
-    return res.status(500).json({ message: `${err}` });
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }

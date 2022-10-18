@@ -1,52 +1,65 @@
 import winston from 'winston';
 import winstonDaily from 'winston-daily-rotate-file';
 import dotenv from 'dotenv';
-import requestIP from 'request-ip';
 dotenv.config();
 
-const { createLogger, transports, format } = winston;
-const { combine, timestamp, json, colorize, printf, label, simple } = format;
+const { createLogger, format, transports } = winston;
 
-const printFormat = printf((info) => {
-  return `${info.timestamp} [${info.label}] ${info.message.method}/ ${info.level} : ${info.message.type} - ${info.message.ip}`;
+const { combine, colorize, simple, json, timestamp, printf, label } = format;
+
+const logDir = `${process.cwd()}/logs`;
+
+const logFormat = printf(({ level, message, label, timestamp }) => {
+  return `${timestamp} [${label}] ${level} ${message}`;
 });
 
-const printLogFormat = {
-  file: combine(
-    label({
-      label: 'Pinggu',
+const logger = new createLogger({
+  format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), label({ label: 'Pinggu' }), logFormat),
+
+  transports: [
+    new winstonDaily({
+      level: 'info',
+      datePattern: 'YYYY-MM-DD',
+      dirname: logDir,
+      filename: `%DATE%.log`,
+      maxFiles: 30,
+      zippedArchive: true,
     }),
 
-    timestamp({
-      format: 'YYYY-MM-DD HH:mm:dd',
+    new winstonDaily({
+      level: 'error',
+      datePattern: 'YYYY-MM-DD',
+      dirname: logDir + '/error',
+      filename: `%DATE%.error.log`,
+      maxFiles: 30,
+      zippedArchive: true,
     }),
-    printFormat,
-  ),
-};
+  ],
 
-const options = {
-  dailyInfo: new winstonDaily({
-    level: 'info',
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    filename: `%DATE%.log`,
-    dirname: './logs',
-    format: printLogFormat.file,
-    maxFiles: 60,
-  }),
-  dailyError: new winstonDaily({
-    level: 'error',
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    filename: `%DATE%.error.log`,
-    dirname: './logs/error',
-    format: printLogFormat.file,
-    maxFiles: 60,
-  }),
-};
-
-const logger = createLogger({
-  transports: [options.dailyInfo, options.dailyError],
+  exceptionHandlers: [
+    new winstonDaily({
+      level: 'error',
+      datePattern: 'YYYY-MM-DD',
+      dirname: logDir,
+      filename: `%DATE%.exception.log`,
+      maxFiles: 30,
+      zippedArchive: true,
+    }),
+  ],
 });
+
+logger.stream = {
+  write: (message) => {
+    logger.info(message);
+  },
+};
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(
+    new transports.Console({
+      format: combine(colorize(), logFormat),
+    }),
+  );
+}
 
 export default logger;
