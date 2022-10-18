@@ -12,4 +12,5 @@ export {
   resultController,
   searchHistoryController,
   profileController,
+  profileController,
 };
