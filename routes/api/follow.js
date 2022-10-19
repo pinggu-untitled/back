@@ -5,11 +5,10 @@ const { Follow } = db;
 const router = express.Router();
 
 /* 팔로우하기 */
-router.get('/:userId', (req, res) => {
+router.post('/:userId', (req, res) => {
   Follow.create({ host: req.user?.id, follow: req.params.userId })
     .then((result) => {
       // 성공 시 insert 된 로우 반환
-      console.log('result >>> ', result);
       if (result) res.status(200).json({ message: 'success' });
       else throw new Error('I0');
     })

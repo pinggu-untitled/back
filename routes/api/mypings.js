@@ -12,12 +12,12 @@ router.post('/sharepings/:mypingsId', (req, res) => {
   MyPings.findOne({ where: { id: req.params.mypingsId, is_private: 0 }, attributes: ['user'] })
     .then((userObj) =>
       SharePings.create({
-        host: userObj.dataValues.user,
-        guest: req.user.id,
+        host: userObj.dataValues?.user,
+        guest: req.user?.id,
         mypings: req.params.mypingsId,
       }),
     )
-    .then((result) => res.status(200).json({ message: 'success ' }))
+    .then((result) => res.status(200).json({ message: 'success' }))
     .catch((err) => res.status(500).json({ message: 'fail' }));
 });
 
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
         title: req.body.title,
         category: req.body.category,
         is_private: req.body.is_private,
-        user: req.user.id,
+        user: req.user?.id,
       },
       { transaction },
     );
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
       const mypingsPostData = req.body.posts.map((postId) => {
         return { mypings: newMypings.id, post: postId };
       });
-      const newMypingsPost = await MyPingsPost.bulkCreate(mypingsPostData, { transaction, returning: true });
+      await MyPingsPost.bulkCreate(mypingsPostData, { transaction, returning: true });
       // await newMypingsPost.save({ transaction });
     }
 
@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
 /* 마이핑스 수정 - Managed Transaction */
 router.patch('/:mypingsId', isAccessible, async (req, res) => {
   try {
-    const result = await sequelize.transaction(async (transaction) => {
+    await sequelize.transaction(async (transaction) => {
       /* MYPINGS UPDATE */
       const updateMypingsResult = await MyPings.update(
         {
@@ -67,7 +67,7 @@ router.patch('/:mypingsId', isAccessible, async (req, res) => {
           category: req.body.category,
           is_private: req.body.is_private,
         },
-        { where: { user: req.user.id, id: req.params.mypingsId } },
+        { where: { user: req.user?.id, id: req.params.mypingsId } },
         { transaction },
       );
       if (updateMypingsResult[0] === 0) throw new Error('Update Mypings Error');
@@ -93,7 +93,7 @@ router.patch('/:mypingsId', isAccessible, async (req, res) => {
         const mypingsPostData = req.body.selPosts.map((postId) => {
           return { mypings: req.body.mypingsId, post: postId };
         });
-        const insertMypingsPostResult = await MyPingsPost.bulkCreate(mypingsPostData, { transaction });
+        await MyPingsPost.bulkCreate(mypingsPostData, { transaction });
       }
     });
     res.status(200).json({ message: 'success' });
@@ -125,7 +125,7 @@ router.get('/posts/:postId', isAccessible, async (req, res) => {
     /* 포스트가 포함되지 않은 마이핑스 */
     const mypingsNotIncludePostArray = await MyPings.findAll({
       where: {
-        user: req.user.id,
+        user: req.user?.id,
         id: {
           [Op.notIn]: mypingsIdIncludePost,
         },
@@ -159,7 +159,7 @@ router.post('/mypingspost/posts/:postId', isAccessible, async (req, res) => {
       const insertData = req.body.selMypings.map((selectedId) => {
         return { mypings: selectedId, post: req.params.postId };
       });
-      const insertResult = await MyPingsPost.bulkCreate(insertData, { transaction });
+      await MyPingsPost.bulkCreate(insertData, { transaction });
     }
 
     /* MYPINGSPOST 테이블에서 DELETE */
@@ -188,21 +188,21 @@ router.post('/mypingspost/posts/:postId', isAccessible, async (req, res) => {
 /* 마이핑스 삭제 - Managed Transaction */
 router.delete('/:mypingsId', isAccessible, async (req, res) => {
   try {
-    const result = await sequelize.transaction(async (transaction) => {
+    await sequelize.transaction(async (transaction) => {
       /* MYPINGS_POST 테이블 DELETE */
-      const mypingsPostDeleteResult = await MyPingsPost.destroy({
+      await MyPingsPost.destroy({
         where: {
           mypings: req.params.mypingsId,
-          user: req.user.id,
+          user: req.user?.id,
         },
         transaction,
       });
 
       /* SHAREPINGS 테이블 DELETE */
-      const sharepingsDeleteResult = await SharePings.destroy({
+      await SharePings.destroy({
         where: {
           mypings: req.params.mypingsId,
-          user: req.user.id,
+          user: req.user?.id,
         },
         transaction,
       });
@@ -212,7 +212,7 @@ router.delete('/:mypingsId', isAccessible, async (req, res) => {
         // delete된 행 수 반환(배열 형태 아님)
         where: {
           id: req.params.mypingsId,
-          user: req.user.id,
+          user: req.user?.id,
         },
         transaction,
       });
@@ -231,7 +231,7 @@ router.patch('/:mypingsId/isprivate', isAccessible, (req, res) => {
     {
       is_private: req.body.is_private,
     },
-    { where: { id: req.params.mypingsId, user: req.user.id } },
+    { where: { id: req.params.mypingsId, user: req.user?.id } },
   )
     .then((result) => {
       // 성공 시 update된 행 수 반환
@@ -253,7 +253,7 @@ router.get('/:mypingsId/modify/posts', async (req, res) => {
     const includedPostIdArray = includedPosts.map((postObj) => postObj.post);
     const includedPostArray = await Post.findAll({
       where: {
-        user: req.user.id,
+        user: req.user?.id,
         id: {
           [Op.in]: includedPostIdArray,
         },
@@ -264,7 +264,7 @@ router.get('/:mypingsId/modify/posts', async (req, res) => {
     /* 해당 마이핑스에 속하지 않은 포스트 */
     const notIncludedPostArray = await Post.findAll({
       where: {
-        user: req.user.id,
+        user: req.user?.id,
         id: {
           [Op.notIn]: includedPostIdArray,
         },
