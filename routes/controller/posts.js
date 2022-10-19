@@ -53,22 +53,45 @@ export async function getPosts(req, res, next) {
   const page = Number(req.query.page);
   try {
     const data = await postRepository.getFollowing(conn);
-    const result = data.map((post) => ({
-      id: post.id,
-      title: post.title,
-      content: post.content,
-      longitude: post.longitude,
-      latitude: post.latitude,
-      hits: post.hits,
-      is_private: post.is_private,
-      created_at: post.created_at,
-      updated_at: post.updated_at,
-      User: {
-        id: post.userId,
-        nickname: post.nickname,
-        profile_image_url: post.profile_image_url,
-      },
-    }));
+    const result = await Promise.all(
+      data.map(async (post) => {
+        const Images = await fileRepository.getAll(conn, post.id);
+        return {
+          id: post.id,
+          title: post.title,
+          content: post.content,
+          longitude: post.longitude,
+          latitude: post.latitude,
+          hits: post.hits,
+          is_private: post.is_private,
+          created_at: post.created_at,
+          updated_at: post.updated_at,
+          User: {
+            id: post.userId,
+            nickname: post.nickname,
+            profile_image_url: post.profile_image_url,
+          },
+          Images,
+        };
+      }),
+    );
+
+    // const result = data.map((post) => ({
+    //   id: post.id,
+    //   title: post.title,
+    //   content: post.content,
+    //   longitude: post.longitude,
+    //   latitude: post.latitude,
+    //   hits: post.hits,
+    //   is_private: post.is_private,
+    //   created_at: post.created_at,
+    //   updated_at: post.updated_at,
+    //   User: {
+    //     id: post.userId,
+    //     nickname: post.nickname,
+    //     profile_image_url: post.profile_image_url,
+    //   },
+    // }));
     // const totalCount = result.length;
     // const totalPages = Math.round(totalCount / size);
 
