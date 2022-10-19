@@ -23,11 +23,13 @@ router.delete('/:userId', (req, res) => {
   Follow.destroy({ where: { host: req.user.id, follow: req.params.userId } })
     .then((result) => {
       // 성공 시 delete 된 로우 수 반환
-      res.status(200).json({ message: 'success' });
+      if (result === 1) res.status(200).json({ message: 'success' });
+      else throw new Error('D0');
     })
     .catch((err) => {
-      console.log(err);
-      res.status(500).json({ message: 'fail' });
+      err.message === 'D0'
+        ? res.status(404).json({ message: '이미 언팔로우된 상태입니다.' })
+        : res.status(500).json({ message: 'fail' });
     });
 });
 
