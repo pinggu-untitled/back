@@ -6,20 +6,20 @@ import mypings from './mypings.js';
 import posts from './posts.js';
 import results from './results.js';
 import searchHistories from './searchHistories.js';
-import followingPosts from './followingPosts.js';
 import profile from './profile.js';
 import {} from 'express-async-errors';
+import { isLoggedIn } from '../middlewares/login.js';
 
 const router = Router();
 
 router.use('/auth', auth);
+router.use('/profile', isLoggedIn, profile);
+router.use('/users', isLoggedIn, user);
+router.use('/follow', isLoggedIn, follow);
+router.use('/mypings', isLoggedIn, mypings);
+router.use('/posts', isLoggedIn, posts);
+router.use('/results', isLoggedIn, results);
+router.use('/search_histories', isLoggedIn, searchHistories);
 router.use('/profile', profile);
-router.use('/users', user);
-router.use('/follow', follow);
-router.use('/mypings', mypings);
-router.use('/posts', posts);
-router.use('/results', results);
-router.use('/search_histories', searchHistories);
-router.use('/following', followingPosts);
 
 export default router;

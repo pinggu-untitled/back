@@ -1,16 +1,13 @@
-import { USER_NUMBER } from '../controller/posts.js';
-
-export async function getAll(conn) {
-  console.log(USER_NUMBER);
+export async function getAll(conn, userId) {
   return await conn
     .execute(
       `SELECT sh.id, sh.updated_at, s.content FROM SEARCHHISTORY as sh join SEARCH as s on sh.search = s.id WHERE sh.user = ? ORDER BY sh.updated_at desc;`,
-      [USER_NUMBER],
+      [Number(userId)],
     )
     .then((res) => res[0]);
 }
 
-export async function create(conn, content) {
+export async function create(conn, userId, content) {
   let searchId = await conn
     .execute('INSERT ignore INTO SEARCH (content) values (?)', [content])
     .then((res) => res[0].insertId);
@@ -19,20 +16,20 @@ export async function create(conn, content) {
   }
 
   try {
-    await conn.execute('INSERT INTO SEARCHHISTORY (user, search) values (?, ?)', [USER_NUMBER, searchId]);
+    await conn.execute('INSERT INTO SEARCHHISTORY (user, search) values (?, ?)', [Number(userId), searchId]);
   } catch (err) {
     await conn.execute('UPDATE SEARCHHISTORY SET updated_at = NOW() WHERE user = ? and search = ?', [
-      USER_NUMBER,
+      Number(userId),
       searchId,
     ]);
   }
 }
 
-export async function remove(conn) {
-  await conn.execute(`DELETE FROM SEARCHHISTORY as sh WHERE sh.user = ?`, [USER_NUMBER]);
+export async function remove(conn, userId) {
+  await conn.execute(`DELETE FROM SEARCHHISTORY as sh WHERE sh.user = ?`, [Number(userId)]);
 }
-export async function removeById(conn, historyId) {
-  await conn.execute(`DELETE FROM SEARCHHISTORY as sh WHERE sh.id = ? and sh.user = ?`, [historyId, USER_NUMBER]);
+export async function removeById(conn, userId, historyId) {
+  await conn.execute(`DELETE FROM SEARCHHISTORY as sh WHERE sh.id = ? and sh.user = ?`, [historyId, Number(userId)]);
 }
 export async function getPopular(conn) {
   return await conn

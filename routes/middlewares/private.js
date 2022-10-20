@@ -8,12 +8,12 @@ export const isPrivate = async (req, res, next) => {
     if (req.originalUrl.includes('posts')) {
       result = await Post.findOne({
         where: { id: req.params.postId },
-        attributes
+        attributes,
       });
     } else if (req.originalUrl.includes('mypings')) {
       result = await MyPings.findOne({
         where: { id: req.params.mypingsId },
-        attributes
+        attributes,
       });
     }
     if (result.is_private && result.user !== req.user.id) throw new Error('비공개 컨텐츠');

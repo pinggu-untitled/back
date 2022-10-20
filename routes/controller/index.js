@@ -5,4 +5,11 @@ import * as resultController from './result.js';
 import * as searchHistoryController from './searchHistories.js';
 import * as profileController from './profile.js';
 
-export { commentController, likedController, postsController, resultController, searchHistoryController, profileController };
+export {
+  commentController,
+  likedController,
+  postsController,
+  resultController,
+  searchHistoryController,
+  profileController,
+};
