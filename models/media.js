@@ -27,7 +27,7 @@ export default (sequelize, DataTypes) => {
     },
   );
   Media.associate = (db) => {
-    db.Media.belongsTo(db.Post, { foreignKey: 'post' });
+    db.Media.belongsTo(db.Post, { foreignKey: 'post', as: 'Images' });
     db.Media.belongsTo(db.User, { foreignKey: 'user' });
   };
   return Media;

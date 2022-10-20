@@ -63,21 +63,32 @@ router.get('/:userId/followings', (req, res) => {
       replacements: [req.params.userId],
     })
     .then((followings) => res.status(200).json(followings))
-    .catch((err) => res.status(500).json({ message: 'fail' }));
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'fail' });
+    });
 });
 
 /* 사용자의 마이핑스 전체 목록 가져오기 */
 router.get('/:userId/mypings', (req, res) => {
   MyPings.findAll({
+    include: [
+      {
+        model: User,
+        as: 'User',
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
+    ],
     where: {
       user: req.params.userId,
     },
-    attributes: ['id', 'title', 'category', 'user', 'is_private'],
+    attributes: ['id', 'title', 'category', 'is_private'],
   })
     .then((mypings) => {
       res.status(200).json(mypings);
     })
     .catch((err) => {
+      console.error(err);
       res.status(500).json({ message: 'fail' });
     });
 });
@@ -85,6 +96,12 @@ router.get('/:userId/mypings', (req, res) => {
 /* 사용의 특정 마이핑스 가져오기 */
 router.get('/:userId/mypings/:mypingsId', (req, res) => {
   MyPings.findOne({
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
+    ],
     where: {
       id: req.params.mypingsId,
       user: req.params.userId,
