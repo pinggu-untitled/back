@@ -14,8 +14,8 @@ export async function getAll(conn) {
 export async function getFollowing(conn, userId) {
   return conn
     .execute(
-      'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = ?) ORDER BY po.created_at desc',
-      [Number(userId)],
+      'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = ?) or po.user = ? ORDER BY po.created_at desc',
+      [Number(userId), Number(userId)],
     )
     .then((result) => result[0]);
 }
