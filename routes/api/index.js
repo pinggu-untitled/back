@@ -20,7 +20,6 @@ router.use('/mypings', isLoggedIn, mypings);
 router.use('/posts', isLoggedIn, posts);
 router.use('/results', isLoggedIn, results);
 router.use('/search_histories', isLoggedIn, searchHistories);
-router.use('/following', followingPosts);
 router.use('/profile', profile);
 
 export default router;
