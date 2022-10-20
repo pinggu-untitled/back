@@ -1,11 +1,10 @@
-import { USER_NUMBER } from '../controller/posts.js';
-
 export async function getAll(conn, postId) {
   return conn.execute(`SELECT * FROM COMMENT WHERE COMMENT.post = ?`, [Number(postId)]).then((result) => result[0]);
 }
-export async function create(conn, pid, postId, content) {
+export async function create(conn, userId, pid, postId, content) {
   return await conn
-    .execute(`INSERT into COMMENT (user, post, pid, content) values (${USER_NUMBER}, ?, ?, ?)`, [
+    .execute(`INSERT into COMMENT (user, post, pid, content) values (?, ?, ?, ?)`, [
+      Number(userId),
       Number(postId),
       Number(pid) ? Number(pid) : null,
       content,
