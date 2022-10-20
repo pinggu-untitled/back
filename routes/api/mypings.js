@@ -10,15 +10,19 @@ const router = express.Router();
 /* 마이핑스 공유하기 */
 router.post('/sharepings/:mypingsId', (req, res) => {
   MyPings.findOne({ where: { id: req.params.mypingsId, is_private: 0 }, attributes: ['user'] })
-    .then((userObj) =>
+    .then((userObj) => {
+      if (!userObj) throw new Error('해당 마이핑스에 접근할 수 없습니다.');
       SharePings.create({
         host: userObj.dataValues?.user,
         guest: req.user?.id,
         mypings: req.params.mypingsId,
-      }),
-    )
+      });
+    })
     .then((result) => res.status(200).json({ message: 'success' }))
-    .catch((err) => res.status(500).json({ message: 'fail' }));
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'fail' });
+    });
 });
 
 /* 마이핑스 생성 - Unmanaged Transaction */
@@ -51,6 +55,7 @@ router.post('/', async (req, res) => {
     res.status(200).json({ message: 'success' });
   } catch (err) {
     await transaction.rollback();
+    console.error(err);
     res.status(500).json({ message: 'fail' });
   }
 });
@@ -98,6 +103,7 @@ router.patch('/:mypingsId', isAccessible, async (req, res) => {
     });
     res.status(200).json({ message: 'success' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'fail' });
   }
 });
@@ -179,8 +185,8 @@ router.post('/mypingspost/posts/:postId', isAccessible, async (req, res) => {
     await transaction.commit();
     res.status(200).json({ message: 'success' });
   } catch (err) {
-    console.error(err);
     await transaction.rollback();
+    console.error(err);
     res.status(500).json({ message: 'fail' });
   }
 });
@@ -238,6 +244,7 @@ router.patch('/:mypingsId/isprivate', isAccessible, (req, res) => {
       res.status(200).json({ message: 'success' });
     })
     .catch((err) => {
+      console.error(err);
       res.status(500).json({ messgae: 'fail' });
     });
 });
@@ -286,6 +293,7 @@ router.get('/:mypingsId/modify/posts', async (req, res) => {
     res.status(200).json([...returnIncludedPostArray, ...returnNotIncludedPostArray]);
   } catch (err) {
     console.log(err);
+    console.error(err);
     res.status(500).json({ message: 'fail' });
   }
 });

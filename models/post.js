@@ -24,7 +24,7 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
       },
       is_private: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT(1),
         allowNull: false,
         defaultValue: false,
       },
@@ -49,7 +49,7 @@ export default (sequelize, DataTypes) => {
   );
   Post.associate = (db) => {
     db.Post.belongsTo(db.User, { foreignKey: 'user' });
-    db.Post.hasMany(db.Media, { foreignKey: 'post' });
+    db.Post.hasMany(db.Media, { foreignKey: 'post', as: 'Images' });
     db.Post.hasMany(db.Comment, { foreignKey: 'post' });
     db.Post.belongsToMany(db.Hashtag, {
       through: db.PostHash,
