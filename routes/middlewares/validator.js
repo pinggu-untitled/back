@@ -48,6 +48,7 @@ export const commentValidator = [
 export async function postIsExist(req, res, next) {
   const { postId } = req.params;
   const conn = await db.getConnection();
+  // FIXME 조회수 2배 이벤트 수정
   const post = await postRepository.getById(conn, postId);
   if (post === undefined) {
     logger.error(`Not Found id: ${postId} Post`);

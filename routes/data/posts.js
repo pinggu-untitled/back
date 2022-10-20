@@ -1,7 +1,5 @@
 import * as fileRepository from './file.js';
 
-// FIXME 추후 모든 게시물에 대해 req.user 적용시켜주기
-
 // 모든 게시물
 export async function getAll(conn) {
   return conn
@@ -151,7 +149,7 @@ export async function getPostHashTags(conn, postId) {
 }
 
 // 게시물 멘션 가져오기
-export async function getPostMentions(conn, postId) {
+export async function getPostMentions(conn, userId, postId) {
   const data = await conn
     .execute(`select mt.id, mt.sender, mt.receiver from MENTION as mt where mt.post = ? and comment is null`, [
       Number(postId),
@@ -159,9 +157,8 @@ export async function getPostMentions(conn, postId) {
     .then((res) => res[0])
     .catch(console.error);
 
-  // FIXME sender => req.user
   const sender = await conn
-    .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [5])
+    .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [Number(userId)])
     .then((res) => res[0][0]);
   const result = await Promise.all(
     data.map(async (el) => {
