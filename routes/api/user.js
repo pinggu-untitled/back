@@ -159,7 +159,7 @@ router.get('/:userId/posts', (req, res) => {
     attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
     where: { user: req.params.userId },
   })
-    .then((posts) => res.json(200).json(posts))
+    .then((posts) => res.status(200).json(posts))
     .catch((err) => {
       console.log(err);
       res.status(500).json({ message: 'fail' });
