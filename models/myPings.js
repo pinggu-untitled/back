@@ -12,7 +12,7 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING(30),
       },
       is_private: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT(1),
       },
     },
     {

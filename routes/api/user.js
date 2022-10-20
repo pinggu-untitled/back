@@ -99,6 +99,7 @@ router.get('/:userId/mypings/:mypingsId', (req, res) => {
     include: [
       {
         model: User,
+        as: 'User',
         attributes: ['id', 'nickname', 'profile_image_url'],
       },
     ],
@@ -106,7 +107,7 @@ router.get('/:userId/mypings/:mypingsId', (req, res) => {
       id: req.params.mypingsId,
       user: req.params.userId,
     },
-    attributes: ['id', 'title', 'category', 'user', 'is_private'],
+    attributes: ['id', 'title', 'category', 'is_private'],
   })
     .then((mypings) => {
       res.status(200).json(mypings);
@@ -122,8 +123,15 @@ router.get('/:userId/sharepings', (req, res) => {
     .then((sharedArray) => sharedArray.map((sharedObj) => sharedObj.mypings))
     .then((sharedIdArray) =>
       MyPings.findAll({
+        include: [
+          {
+            model: User,
+            as: 'User',
+            attributes: ['id', 'nickname', 'profile_image_url'],
+          },
+        ],
         where: { id: { [Op.in]: sharedIdArray } },
-        attributes: ['id', 'title', 'category', 'user', 'is_private'],
+        attributes: ['id', 'title', 'category', 'is_private'],
       }),
     )
     .then((result) => res.status(200).json(result))
@@ -136,11 +144,15 @@ router.get('/:userId/posts', (req, res) => {
     include: [
       {
         model: Media,
-        attributes: ['src'],
-        limit: 1,
+        as: 'Images',
+        attributes: ['id', 'src'],
+      },
+      {
+        model: User,
+        attributes: ['id', 'nickname', 'profile_image_url'],
       },
     ],
-    attributes: ['id', 'created_at', 'title', 'hits', 'is_private'],
+    attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
     where: { user: req.params.userId },
   })
     .then((posts) => res.status(200).json(posts))
@@ -150,6 +162,7 @@ router.get('/:userId/posts', (req, res) => {
     });
 });
 
+// --- 수정된 내용 없음 ---
 /* 특정 마이핑스에 속한 포스트 목록 가져오기 */
 /**
  * SELECT p.id, p.created_at, p.title, p.hits, p.is_private, m.src
