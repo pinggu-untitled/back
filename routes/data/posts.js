@@ -1,7 +1,4 @@
-import { USER_NUMBER } from '../controller/posts.js';
 import * as fileRepository from './file.js';
-
-// FIXME 추후 모든 게시물에 대해 req.user 적용시켜주기
 
 // 모든 게시물
 export async function getAll(conn) {
@@ -12,10 +9,11 @@ export async function getAll(conn) {
     .then((result) => result[0]);
 }
 // follwing 한 사람들 게시물 쿼리
-export async function getFollowing(conn) {
+export async function getFollowing(conn, userId) {
   return conn
     .execute(
-      'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = 1) ORDER BY po.created_at desc',
+      'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = ?) or po.user = ? ORDER BY po.created_at desc',
+      [Number(userId), Number(userId)],
     )
     .then((result) => result[0]);
 }
@@ -32,19 +30,17 @@ export async function getById(conn, postId) {
 }
 
 // 게시물 생성 쿼리
-export async function create(conn, post, mentions, hashtags, images) {
+export async function create(conn, userId, post, mentions, hashtags, images) {
   console.log(post);
   const newPost = await conn
-    .execute(
-      `INSERT into POST (user, title, content, longitude, latitude, is_private) values (${USER_NUMBER}, ?, ?, ?, ?, ?)`,
-      [
-        post.title,
-        post.content.trim() === '' ? null : post.content,
-        post.longitude,
-        post.latitude,
-        post.is_private ? 1 : 0,
-      ],
-    )
+    .execute(`INSERT into POST (user, title, content, longitude, latitude, is_private) values (?, ?, ?, ?, ?, ?)`, [
+      Number(userId),
+      post.title,
+      post.content.trim() === '' ? null : post.content,
+      post.longitude,
+      post.latitude,
+      post.is_private ? 1 : 0,
+    ])
     .then((result) => getById(conn, result[0].insertId));
   if (hashtags && hashtags.length !== 0) {
     for (const hashtag of hashtags) {
@@ -66,21 +62,21 @@ export async function create(conn, post, mentions, hashtags, images) {
     for (const mention of mentions) {
       await conn.execute(`INSERT into MENTION (post, sender, receiver) values (?, ?, ?)`, [
         Number(newPost.id),
-        Number(USER_NUMBER),
+        Number(userId),
         Number(mention.receiver),
       ]);
     }
   }
   if (images.length !== 0) {
     images.map(async (image) => {
-      await fileRepository.create(conn, image, newPost.id);
+      await fileRepository.create(conn, userId, image, newPost.id);
     });
   }
   return newPost;
 }
 
 // 특정 게시물 수정
-export async function update(conn, postId, post, mentions, hashtags, images) {
+export async function update(conn, userId, postId, post, mentions, hashtags, images) {
   const updatePost = await conn
     .execute(`UPDATE POST SET title = ?, content = ?, longitude = ?, latitude = ?, is_private = ? WHERE id = ?`, [
       post.title,
@@ -119,14 +115,14 @@ export async function update(conn, postId, post, mentions, hashtags, images) {
     for (const mention of mentions) {
       await conn.execute(`INSERT into MENTION (post, sender, receiver) values (?, ?, ?)`, [
         Number(updatePost.id),
-        Number(USER_NUMBER),
+        Number(userId),
         Number(mention.receiver),
       ]);
     }
   }
   if (images?.length !== 0) {
     images?.map(async (image) => {
-      await fileRepository.create(conn, image, updatePost.id);
+      await fileRepository.create(conn, userId, image, updatePost.id);
     });
   } else {
     await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [Number(postId)]);
@@ -153,7 +149,7 @@ export async function getPostHashTags(conn, postId) {
 }
 
 // 게시물 멘션 가져오기
-export async function getPostMentions(conn, postId) {
+export async function getPostMentions(conn, userId, postId) {
   const data = await conn
     .execute(`select mt.id, mt.sender, mt.receiver from MENTION as mt where mt.post = ? and comment is null`, [
       Number(postId),
@@ -161,9 +157,8 @@ export async function getPostMentions(conn, postId) {
     .then((res) => res[0])
     .catch(console.error);
 
-  // FIXME sender => req.user
   const sender = await conn
-    .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [5])
+    .execute(`select us.id, us.nickname, us.profile_image_url from USER as us where us.id = ?`, [Number(userId)])
     .then((res) => res[0][0]);
   const result = await Promise.all(
     data.map(async (el) => {
