@@ -12,7 +12,7 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING(30),
       },
       is_private: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT(1),
       },
     },
     {
@@ -31,8 +31,8 @@ export default (sequelize, DataTypes) => {
   MyPings.associate = (db) => {
     db.MyPings.belongsTo(db.Category, { foreignKey: 'category' });
     db.MyPings.belongsTo(db.User, {
-      as: 'Host',
-      foreignKey: 'host',
+      as: 'User',
+      foreignKey: 'user',
     });
     db.MyPings.belongsToMany(db.User, {
       through: db.SharePings,

@@ -13,6 +13,7 @@ router.post('/:userId', (req, res) => {
       else throw new Error('I0');
     })
     .catch((err) => {
+      console.error(err);
       err.message === 'I0' ? res.status(404).json({ message: 'fail' }) : res.status(500).json({ message: 'fail' });
     });
 });
@@ -26,6 +27,7 @@ router.delete('/:userId', (req, res) => {
       else throw new Error('D0');
     })
     .catch((err) => {
+      console.error(err);
       err.message === 'D0'
         ? res.status(404).json({ message: '이미 언팔로우된 상태입니다.' })
         : res.status(500).json({ message: 'fail' });
