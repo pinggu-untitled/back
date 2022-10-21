@@ -31,7 +31,6 @@ export async function getById(conn, postId) {
 
 // 게시물 생성 쿼리
 export async function create(conn, userId, post, mentions, hashtags, images) {
-  console.log(post);
   const newPost = await conn
     .execute(`INSERT into POST (user, title, content, longitude, latitude, is_private) values (?, ?, ?, ?, ?, ?)`, [
       Number(userId),
@@ -42,6 +41,7 @@ export async function create(conn, userId, post, mentions, hashtags, images) {
       post.is_private ? 1 : 0,
     ])
     .then((result) => getById(conn, result[0].insertId));
+
   if (hashtags && hashtags.length !== 0) {
     for (const hashtag of hashtags) {
       const hashExist = await conn

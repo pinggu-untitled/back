@@ -64,7 +64,6 @@ export async function commentIsExist(req, res, next) {
   const comment = await commentRepository.getComment(conn, commentId);
 
   if (comment === undefined) {
-    console.log('hello');
     logger.error(`Not Found id: ${commentId} comment`);
     return res.status(404).json({ success: 'fail', message: '댓글이 존재하지 않습니다.' });
   }
