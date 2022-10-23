@@ -21,13 +21,7 @@ postsRouter.post('/', upload.none(), createPostValidator, postsController.create
 
 postsRouter.post('/images', upload.array('images'), postsController.createMedia);
 postsRouter.get('/:postId', isPrivate, postIsExist, postsController.getPost);
-postsRouter.patch(
-  '/:postId',
-  // isAccessible,
-  postIsExist,
-  updatePostValidator,
-  postsController.updatePost,
-);
+postsRouter.patch('/:postId', isAccessible, postIsExist, updatePostValidator, postsController.updatePost);
 postsRouter.delete('/:postId', isAccessible, postIsExist, postsController.removePost);
 
 postsRouter.get('/:postId/comments', postIsExist, commentController.getComment);
