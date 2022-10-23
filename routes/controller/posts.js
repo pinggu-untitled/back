@@ -216,11 +216,14 @@ export async function createMedia(req, res, next) {
 
 // 게시물 수정하기
 export async function updatePost(req, res, next) {
+  console.log('update111111111111111111111111111');
   const { postId } = req.params;
   const { title, content, longitude, latitude, is_private, mentions, hashtags, images } = req.body;
+  // const userId = req.user.id;
   const userId = req.user.id;
   const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
+  console.log('update2222222222222');
   try {
     await conn.beginTransaction();
     const newPost = await postRepository
@@ -229,6 +232,7 @@ export async function updatePost(req, res, next) {
       .catch(console.error);
 
     await conn.commit();
+
     return res.status(201).json(newPost);
   } catch (err) {
     await conn.rollback();

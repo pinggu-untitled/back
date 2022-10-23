@@ -76,7 +76,9 @@ export async function create(conn, userId, post, mentions, hashtags, images) {
 }
 
 // 특정 게시물 수정
+// TODO Front 합치기
 export async function update(conn, userId, postId, post, mentions, hashtags, images) {
+  console.log('UPDATE!@@@@@@@@@@@@@@@@@@');
   const updatePost = await conn
     .execute(`UPDATE POST SET title = ?, content = ?, longitude = ?, latitude = ?, is_private = ? WHERE id = ?`, [
       post.title,
@@ -120,7 +122,9 @@ export async function update(conn, userId, postId, post, mentions, hashtags, ima
       ]);
     }
   }
+  console.log('UPDATE!@@@@@@@@@@@@@@@@@@');
   if (images?.length !== 0) {
+    await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [postId]);
     images?.map(async (image) => {
       await fileRepository.create(conn, userId, image, updatePost.id);
     });
