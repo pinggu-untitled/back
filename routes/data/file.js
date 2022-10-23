@@ -6,17 +6,13 @@ export async function getAll(conn, postId) {
 }
 
 export async function create(conn, userId, file, postId) {
-  await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [postId]);
-
-  if (file.length !== 0) {
-    if (file.includes('/')) {
-      await conn.execute('UPDATE MEDIA as md SET md.post = ? WHERE src = ?', [postId, file]);
-    } else {
-      await conn.execute('INSERT into MEDIA (src, user, post) values (?, ?, ?)', [
-        `${time.year}/${time.month}/${time.date}/${file}`,
-        Number(userId),
-        Number(postId),
-      ]);
-    }
+  if (file.includes('/')) {
+    await conn.execute('UPDATE MEDIA as md SET md.post = ? WHERE src = ?', [postId, file]);
+  } else {
+    await conn.execute('INSERT into MEDIA (src, user, post) values (?, ?, ?)', [
+      `${time.year}/${time.month}/${time.date}/${file}`,
+      Number(userId),
+      Number(postId),
+    ]);
   }
 }
