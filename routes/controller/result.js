@@ -14,7 +14,6 @@ export async function getResult(req, res, next) {
 
       case 'content':
         post = await resultRepository.getPostByContent(conn, query);
-        console.log(post);
         return res.status(200).json({ post });
 
       case 'user':
@@ -27,15 +26,13 @@ export async function getResult(req, res, next) {
 
       case 'hashtag':
         post = await resultRepository.getPostByHashtag(conn, query);
-        console.log(post);
         return res.status(200).json({ post });
-        break;
       default:
         throw new Error('Invalid filter!');
-        break;
     }
   } catch (err) {
-    return res.status(500).json({ message: `${err}` });
+    logger.error(`Server Error`);
+    return res.status(500).json(err);
   } finally {
     conn.release();
   }

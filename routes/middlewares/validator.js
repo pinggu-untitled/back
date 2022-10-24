@@ -1,4 +1,7 @@
 import { body, validationResult } from 'express-validator';
+import logger from '../../config/logger.js';
+import { db } from '../../config/mysql.js';
+import { commentRepository, postRepository } from '../data/index.js';
 
 const LAT_PATTERN = new RegExp('^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$');
 const LON_PATTERN = new RegExp(
@@ -37,6 +40,32 @@ export const updatePostValidator = [
   validate,
 ];
 
-export const createCommentValidator = [body('content').trim().isEmpty().withMessage('내용을 입력해주세요!'), validate];
+export const commentValidator = [
+  body('content').trim().isLength({ min: 1 }).withMessage('내용을 입력해주세요!'),
+  validate,
+];
 
-export const updateCommentValidator = [body('content').trim().isEmpty().withMessage('내용을 입력해주세요!'), validate];
+export async function postIsExist(req, res, next) {
+  const { postId } = req.params;
+  const conn = await db.getConnection();
+  const post = await postRepository.getById(conn, postId);
+  if (post === undefined) {
+    logger.error(`Not Found id: ${postId} Post`);
+    return res.status(404).json({ success: 'fail', message: '포스트가 존재하지 않습니다.' });
+  }
+  conn.release();
+  next();
+}
+
+export async function commentIsExist(req, res, next) {
+  const { commentId } = req.params;
+  const conn = await db.getConnection();
+  const comment = await commentRepository.getComment(conn, commentId);
+
+  if (comment === undefined) {
+    logger.error(`Not Found id: ${commentId} comment`);
+    return res.status(404).json({ success: 'fail', message: '댓글이 존재하지 않습니다.' });
+  }
+  conn.release();
+  next();
+}

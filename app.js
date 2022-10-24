@@ -13,9 +13,11 @@ dotenv.config();
 import db from './models/index.js';
 import passportConfig from './passport/index.js';
 import apiRouter from './routes/api/index.js';
-import { makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
+import { deleteImageScheduler, makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
 import { time } from './routes/middlewares/upload.js';
 // const webSocket = require("./socket");
+import morganMiddleware from './routes/middlewares/morganmiddleware.js';
+import {} from 'express-async-errors';
 
 const app = express();
 app.set('PORT', process.env.PORT || 8080);
@@ -28,13 +30,12 @@ passportConfig();
 
 const prod = process.env.NODE_ENV === 'production';
 
+app.use(morganMiddleware);
 if (prod) {
   app.enable('trust proxy');
-  app.use(morgan('combined'));
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(hpp());
 } else {
-  app.use(morgan('dev'));
   app.use(
     cors({
       origin: 'http://localhost:3000',
@@ -83,3 +84,5 @@ app.listen(app.get('PORT'), () => console.log(`✅ Express 서버 구동 중 htt
 
 makeFolder(`./uploads/images/${time.year}/${time.month}/${time.date}`);
 makeFolderScheduler();
+
+await deleteImageScheduler();
