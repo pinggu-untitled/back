@@ -85,4 +85,4 @@ app.listen(app.get('PORT'), () => console.log(`✅ Express 서버 구동 중 htt
 makeFolder(`./uploads/images/${time.year}/${time.month}/${time.date}`);
 makeFolderScheduler();
 
-deleteImageScheduler();
+await deleteImageScheduler();
