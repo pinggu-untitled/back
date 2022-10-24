@@ -7,8 +7,46 @@ export async function getComment(req, res, next) {
   const { postId } = req.params;
   const conn = await db.getConnection();
   try {
-    const data = await commentRepository.getAll(conn, postId);
-    return res.status(200).json(data);
+    // const data = await commentRepository.getAll(conn, postId);
+    // return res.status(200).json(data);
+    let [Comments, childComments] = await Promise.all([
+      commentRepository.getParentComments(conn, postId),
+      commentRepository.getChildComments(conn, postId),
+    ]);
+
+    Comments = Comments.map(({ id, content, pid, created_at, updated_at, userId, nickname, profile_image_url }) => ({
+      id,
+      content,
+      pid,
+      created_at,
+      updated_at,
+      User: {
+        id: userId,
+        nickname,
+        profile_image_url,
+      },
+    }));
+    childComments = childComments.map(
+      ({ id, content, pid, created_at, updated_at, userId, nickname, profile_image_url }) => ({
+        id,
+        content,
+        pid,
+        created_at,
+        updated_at,
+        User: {
+          id: userId,
+          nickname,
+          profile_image_url,
+        },
+      }),
+    );
+
+    Comments.map((comment) => {
+      comment.Comments = childComments.filter((el) => el.pid === comment.id);
+      return comment;
+    });
+
+    res.status(200).json(Comments);
   } catch (err) {
     logger.error(`Server Error`);
     return res.status(500).json(err);
