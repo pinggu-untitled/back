@@ -14,7 +14,6 @@ export async function getResult(req, res, next) {
 
       case 'content':
         post = await resultRepository.getPostByContent(conn, query);
-        console.log(post);
         return res.status(200).json({ post });
 
       case 'user':
@@ -27,7 +26,6 @@ export async function getResult(req, res, next) {
 
       case 'hashtag':
         post = await resultRepository.getPostByHashtag(conn, query);
-        console.log(post);
         return res.status(200).json({ post });
       default:
         throw new Error('Invalid filter!');

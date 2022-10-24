@@ -121,7 +121,6 @@ export async function getPosts(req, res, next) {
 // postId로 특정 게시물 정보 가져오기
 export async function getPost(req, res, next) {
   const { postId } = req.params;
-  const userId = req.user.id;
   const conn = await db.getConnection();
   try {
     let [post, Likers, Comments, childComments, Images] = await Promise.all([
