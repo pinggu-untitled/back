@@ -25,7 +25,7 @@ postsRouter.patch('/:postId', isAccessible, postIsExist, updatePostValidator, po
 postsRouter.delete('/:postId', isAccessible, postIsExist, postsController.removePost);
 
 postsRouter.get('/:postId/comments', postIsExist, commentController.getComment);
-postsRouter.post('/:postId/comments', isAccessible, postIsExist, commentValidator, commentController.createComment);
+postsRouter.post('/:postId/comments', postIsExist, commentValidator, commentController.createComment);
 postsRouter.patch(
   '/:postId/comments/:commentId',
   isAccessible,
