@@ -6,7 +6,6 @@ import mypings from './mypings.js';
 import posts from './posts.js';
 import results from './results.js';
 import searchHistories from './searchHistories.js';
-import followingPosts from './followingPosts.js';
 import profile from './profile.js';
 import {} from 'express-async-errors';
 import { isLoggedIn } from '../middlewares/login.js';

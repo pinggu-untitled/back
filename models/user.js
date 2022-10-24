@@ -77,7 +77,7 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'user',
     });
     db.User.hasMany(db.MyPings, {
-      foreignKey: 'host',
+      foreignKey: 'user',
     });
 
     db.User.belongsToMany(db.MyPings, {
