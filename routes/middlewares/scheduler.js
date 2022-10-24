@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 
 import fs from 'fs';
+import fsp from 'fs/promises';
 import { db } from '../../config/mysql.js';
 import path from 'path';
 export const makeFolder = (dir) => {
