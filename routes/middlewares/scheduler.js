@@ -38,9 +38,23 @@ export async function deleteImageScheduler() {
   const conn = await db.getConnection();
   try {
     const imagesPath = await conn
-      .execute('SELECT md.src from MEDIA as md where md.post is null')
-      .then((res) => res[0].map((el) => el.src));
+      .execute('SELECT md.id, md.src from MEDIA as md where md.post is null')
+      .then((res) => res[0]);
+    console.log(imagesPath);
+
+    for await (const image of imagesPath) {
+      try {
+        console.log('hello@@@@@@@@@@@@@@');
+        await fsp.unlink(`./uploads/images/${image.src}`);
+        console.log('삭제되었습니다.');
+
+        await conn.execute('delete from MEDIA as md where md.id = ?', [image.id]);
+      } catch (err) {
+        console.error('에러');
+      }
+    }
   } catch (error) {
+    console.log(error);
   } finally {
     conn.release();
   }
