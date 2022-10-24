@@ -29,4 +29,15 @@ const storage = multer.diskStorage({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
+const profileStorage = multer.diskStorage({
+  destination: (req, file, done) => {
+    done(null, `uploads/images/profile/`);
+  },
+  filename: (req, file, done) => {
+    done(null, `${uuid()}.${file.mimetype.split('/')[1]}`);
+  },
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
 export const upload = multer({ storage });
+export const profileUpload = multer({storage : profileStorage});
