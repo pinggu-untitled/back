@@ -11,3 +11,5 @@ profileRouter.post('/image', upload.single('file'), profileController.updateProf
 profileRouter.patch('/info', profileController.updateProfileInfo);
 
 export default profileRouter;
+
+//TODO Profile 수정
