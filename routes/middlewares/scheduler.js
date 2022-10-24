@@ -40,7 +40,6 @@ export async function deleteImageScheduler() {
     const imagesPath = await conn
       .execute('SELECT md.src from MEDIA as md where md.post is null')
       .then((res) => res[0].map((el) => el.src));
-    console.log(imagesPath);
   } catch (error) {
   } finally {
     conn.release();

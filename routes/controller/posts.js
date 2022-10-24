@@ -49,7 +49,6 @@ export async function getAllTest(req, res, next) {
 
 // 팔로우 한 사람들 게시물 모두 가져오기
 export async function getPosts(req, res, next) {
-  console.log(req.user.id);
   const conn = await db.getConnection();
   const userId = req.user.id;
   const size = Number(req.query.size);
@@ -123,6 +122,7 @@ export async function getPost(req, res, next) {
   const { postId } = req.params;
   const conn = await db.getConnection();
   try {
+    postRepository.updateHits(conn, postId);
     let [post, Likers, Comments, childComments, Images] = await Promise.all([
       postRepository.getById(conn, postId),
       likeRepository.getAll(conn, postId),
@@ -171,6 +171,7 @@ export async function getPost(req, res, next) {
     post.User = { id: userId, nickname, profile_image_url };
     post.Comments = Comments;
     post.Likers = Likers;
+
     return res.status(200).json({ ...post });
   } catch (err) {
     logger.error(`Server Error`);
@@ -210,20 +211,17 @@ export async function createMedia(req, res, next) {
   const currentFile = Object.values(req.body);
   const result = images.map((el) => el.filename);
   result.push(...currentFile);
-  console.log(result);
   return res.status(200).json(result);
 }
 
 // 게시물 수정하기
 export async function updatePost(req, res, next) {
-  console.log('update111111111111111111111111111');
   const { postId } = req.params;
   const { title, content, longitude, latitude, is_private, mentions, hashtags, images } = req.body;
   // const userId = req.user.id;
   const userId = req.user.id;
   const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
-  console.log('update2222222222222');
   try {
     await conn.beginTransaction();
     const newPost = await postRepository
