@@ -13,10 +13,10 @@ import { isLoggedIn } from '../middlewares/login.js';
 const router = Router();
 
 router.use('/auth', auth);
-router.use('/profile', isLoggedIn, profile);
-router.use('/users', isLoggedIn, user);
-router.use('/follow', isLoggedIn, follow);
-router.use('/mypings', isLoggedIn, mypings);
+router.use('/profile', profile);
+router.use('/users', user);
+router.use('/follow', follow);
+router.use('/mypings', mypings);
 router.use('/posts', isLoggedIn, posts);
 router.use('/results', isLoggedIn, results);
 router.use('/search_histories', isLoggedIn, searchHistories);

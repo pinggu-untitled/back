@@ -20,7 +20,6 @@ export async function getFollowing(conn, userId) {
 
 // 특정 게시물 쿼리
 export async function getById(conn, postId) {
-  conn.execute('UPDATE POST SET hits = hits + 1 where id = ?', [Number(postId)]);
   return conn //
     .execute(
       'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private,  po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id WHERE po.id = ? ORDER BY po.created_at desc',
@@ -31,7 +30,6 @@ export async function getById(conn, postId) {
 
 // 게시물 생성 쿼리
 export async function create(conn, userId, post, mentions, hashtags, images) {
-  console.log(post);
   const newPost = await conn
     .execute(`INSERT into POST (user, title, content, longitude, latitude, is_private) values (?, ?, ?, ?, ?, ?)`, [
       Number(userId),
@@ -42,6 +40,7 @@ export async function create(conn, userId, post, mentions, hashtags, images) {
       post.is_private ? 1 : 0,
     ])
     .then((result) => getById(conn, result[0].insertId));
+
   if (hashtags && hashtags.length !== 0) {
     for (const hashtag of hashtags) {
       const hashExist = await conn
@@ -121,6 +120,7 @@ export async function update(conn, userId, postId, post, mentions, hashtags, ima
     }
   }
   if (images?.length !== 0) {
+    await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [postId]);
     images?.map(async (image) => {
       await fileRepository.create(conn, userId, image, updatePost.id);
     });
@@ -173,4 +173,8 @@ export async function getPostMentions(conn, userId, postId) {
     }),
   );
   return result;
+}
+
+export async function updateHits(conn, postId) {
+  conn.execute('UPDATE POST SET hits = hits + 1 where id = ?', [Number(postId)]);
 }

@@ -85,6 +85,7 @@ router.get('/:userId/mypings', (req, res) => {
       user: req.params.userId,
     },
     attributes: ['id', 'title', 'category', 'is_private'],
+    order: [['created_at', 'DESC']],
   })
     .then((mypings) => res.status(200).json(mypings))
     .catch((err) => {
@@ -133,6 +134,7 @@ router.get('/:userId/sharepings', (req, res) => {
         ],
         where: { id: { [Op.in]: sharedIdArray } },
         attributes: ['id', 'title', 'category', 'is_private'],
+        order: [['created_at', 'DESC']],
       }),
     )
     .then((result) => res.status(200).json(result))
@@ -158,6 +160,7 @@ router.get('/:userId/posts', (req, res) => {
     ],
     attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
     where: { user: req.params.userId },
+    order: [['created_at', 'DESC']],
   })
     .then((posts) => res.status(200).json(posts))
     .catch((err) => {
@@ -200,6 +203,7 @@ router.get('/:userId/mypings/:mypingsId/posts', (req, res) => {
           'hits',
           'is_private',
         ],
+        order: [['created_at', 'DESC']],
       }),
     )
     .then((posts) => {

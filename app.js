@@ -13,7 +13,7 @@ dotenv.config();
 import db from './models/index.js';
 import passportConfig from './passport/index.js';
 import apiRouter from './routes/api/index.js';
-import { makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
+import { deleteImageScheduler, makeFolder, makeFolderScheduler } from './routes/middlewares/scheduler.js';
 import { time } from './routes/middlewares/upload.js';
 // const webSocket = require("./socket");
 import morganMiddleware from './routes/middlewares/morganmiddleware.js';
@@ -84,3 +84,5 @@ app.listen(app.get('PORT'), () => console.log(`✅ Express 서버 구동 중 htt
 
 makeFolder(`./uploads/images/${time.year}/${time.month}/${time.date}`);
 makeFolderScheduler();
+
+await deleteImageScheduler();

@@ -48,7 +48,6 @@ export const commentValidator = [
 export async function postIsExist(req, res, next) {
   const { postId } = req.params;
   const conn = await db.getConnection();
-  // FIXME 조회수 2배 이벤트 수정
   const post = await postRepository.getById(conn, postId);
   if (post === undefined) {
     logger.error(`Not Found id: ${postId} Post`);
@@ -64,7 +63,6 @@ export async function commentIsExist(req, res, next) {
   const comment = await commentRepository.getComment(conn, commentId);
 
   if (comment === undefined) {
-    console.log('hello');
     logger.error(`Not Found id: ${commentId} comment`);
     return res.status(404).json({ success: 'fail', message: '댓글이 존재하지 않습니다.' });
   }
