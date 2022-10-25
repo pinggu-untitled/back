@@ -1,10 +1,12 @@
 import db from '../../models/index.js';
-const { MyPings, Post } = db;
+const { MyPings, Post, Comment } = db;
 
 export const isAccessible = async (req, res, next) => {
   try {
     let result;
-    if (req.originalUrl.includes('posts')) {
+    if (req.originalUrl.includes('comments')) {
+      result = await Comment.findOne({ where: { id: req.params.commentId }, attributes: ['user'] });
+    } else if (req.originalUrl.includes('posts')) {
       result = await Post.findOne({ where: { id: req.params.postId }, attributes: ['user'] });
     } else if (req.originalUrl.includes('mypings')) {
       result = await MyPings.findOne({ where: { id: req.params.mypingsId }, attributes: ['user'] });

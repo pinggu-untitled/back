@@ -55,6 +55,7 @@ export async function getPosts(req, res, next) {
   const page = Number(req.query.page);
   try {
     const data = await postRepository.getFollowing(conn, userId);
+    console.log('@@@@@@@');
     const result = await Promise.all(
       data.map(
         async ({
@@ -71,7 +72,7 @@ export async function getPosts(req, res, next) {
           nickname,
           profile_image_url,
         }) => {
-          const Images = await fileRepository.getAll(conn, post.id);
+          const Images = await fileRepository.getAll(conn, id);
           return {
             id,
             title,
