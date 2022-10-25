@@ -39,7 +39,7 @@ export async function deleteImageScheduler() {
   const conn = await db.getConnection();
   try {
     const imagesPath = await conn
-      .execute('SELECT md.id, md.src from MEDIA as md where md.post is null')
+      .execute('SELECT md.id, md.src from MEDIA as md where md.post is null or md.user is null')
       .then((res) => res[0]);
     console.log(imagesPath);
 

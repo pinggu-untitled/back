@@ -1,7 +1,7 @@
 import { db } from '../../config/mysql.js';
 import { postRepository, likeRepository, commentRepository, fileRepository } from '../data/index.js';
 import logger from '../../config/logger.js';
-
+import { transDate } from '../../utils/date.js';
 export const rand = (start, end) => {
   return Math.floor(Math.random() * (end - start + 1)) + start;
 };
@@ -55,7 +55,6 @@ export async function getPosts(req, res, next) {
   const page = Number(req.query.page);
   try {
     const data = await postRepository.getFollowing(conn, userId);
-    console.log('@@@@@@@');
     const result = await Promise.all(
       data.map(
         async ({
@@ -187,6 +186,8 @@ export async function getPost(req, res, next) {
     post.User = { id: userId, nickname, profile_image_url };
     post.Comments = Comments;
     post.Likers = Likers;
+    post.created_at = transDate(post.created_at);
+    post.updated_at = transDate(post.updated_at);
 
     return res.status(200).json({ ...post });
   } catch (err) {
