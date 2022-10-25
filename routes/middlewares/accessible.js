@@ -5,7 +5,7 @@ export const isAccessible = async (req, res, next) => {
   try {
     let result;
     if (req.originalUrl.includes('comments')) {
-      result = await Comment.findOne({ where: { id: req.params.commentsId }, attributes: ['user'] });
+      result = await Comment.findOne({ where: { id: req.params.commentId }, attributes: ['user'] });
     } else if (req.originalUrl.includes('posts')) {
       result = await Post.findOne({ where: { id: req.params.postId }, attributes: ['user'] });
     } else if (req.originalUrl.includes('mypings')) {
