@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Sequelize from 'sequelize';
 import db from '../../models/index.js';
+import { isPrivate } from '../middlewares/private.js';
 const { User, Post, Media, MyPings, MyPingsPost, SharePings, sequelize } = db;
 const { QueryTypes } = sequelize;
 const { Op } = Sequelize;
@@ -95,7 +96,7 @@ router.get('/:userId/mypings', (req, res) => {
 });
 
 /* 사용의 특정 마이핑스 가져오기 */
-router.get('/:userId/mypings/:mypingsId', (req, res) => {
+router.get('/:userId/mypings/:mypingsId', isPrivate, (req, res) => {
   MyPings.findOne({
     include: [
       {
