@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Sequelize from 'sequelize';
 import db from '../../models/index.js';
-const { User, Post, Media, MyPings, MyPingsPost, SharePings, sequelize } = db;
+const { User, Post, Media, MyPings, SharePings, sequelize } = db;
 const { QueryTypes } = sequelize;
 const { Op } = Sequelize;
 
