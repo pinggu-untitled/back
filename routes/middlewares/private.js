@@ -20,6 +20,6 @@ export const isPrivate = async (req, res, next) => {
     next();
   } catch (err) {
     console.error(err);
-    res.status(402).json({ message: 'fail' });
+    res.status(402).json({ message: err.message });
   }
 };
