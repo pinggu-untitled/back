@@ -2,10 +2,36 @@ import express from 'express';
 import Sequelize from 'sequelize';
 import db from '../../models/index.js';
 import { isAccessible } from '../middlewares/accessible.js';
-const { MyPings, SharePings, MyPingsPost, Post, sequelize } = db;
+import { isPrivate } from '../middlewares/private.js';
+const { MyPings, SharePings, MyPingsPost, Post, User, sequelize } = db;
 const { Op } = Sequelize;
 
 const router = express.Router();
+
+/* 사용의 특정 마이핑스 가져오기 */
+router.get('/:mypingsId', isPrivate, (req, res) => {
+  MyPings.findOne({
+    include: [
+      {
+        model: User,
+        as: 'User',
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
+    ],
+    where: {
+      id: req.params.mypingsId,
+    },
+    attributes: ['id', 'title', 'category', 'is_private'],
+  })
+    .then((mypings) => {
+      console.log('mypings>> ', mypings);
+      mypings ? res.status(200).json(mypings) : res.status(404).json({ message: '조회된 마이핑스가 없습니다.' });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'fail' });
+    });
+});
 
 /* 마이핑스 공유하기 */
 router.post('/sharepings/:mypingsId', (req, res) => {
