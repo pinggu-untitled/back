@@ -206,10 +206,7 @@ export async function createPost(req, res, next) {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
-    const newPost = await postRepository
-      .create(conn, userId, post, mentions, hashtags, images)
-      .then((result) => result)
-      .catch(console.error);
+    const newPost = await postRepository.create(conn, userId, post, mentions, hashtags, images).catch(console.error);
 
     await conn.commit();
     return res.status(201).json(newPost);

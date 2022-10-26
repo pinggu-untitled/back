@@ -16,7 +16,8 @@ const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
 postsRouter.get('/all', postsController.getAllTest);
-
+// TODO 지도 범위 내에 등록된 포스트 조회
+postsRouter.get('/bounds', (req, res, next) => {});
 postsRouter.post('/', upload.none(), createPostValidator, postsController.createPost);
 
 postsRouter.post('/images', upload.array('images'), postsController.createMedia);
