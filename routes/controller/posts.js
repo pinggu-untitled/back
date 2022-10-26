@@ -240,7 +240,6 @@ export async function updatePost(req, res, next) {
     await conn.beginTransaction();
     const newPost = await postRepository
       .update(conn, userId, postId, post, mentions, hashtags, images)
-      .then((result) => result)
       .catch(console.error);
 
     await conn.commit();

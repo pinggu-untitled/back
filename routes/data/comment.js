@@ -50,8 +50,43 @@ export async function create(conn, userId, pid, postId, content, hashtags, menti
 //     ])
 //     .then((res) => res[0].insertId);
 // }
-export async function update(conn, content, commentId) {
-  return conn.execute(`UPDATE COMMENT set content = ? WHERE COMMENT.id = ?`, [content, Number(commentId)]);
+export async function update(conn, userId, content, commentId, mentions, hashtags) {
+  const updateComment = await conn
+    .execute(`UPDATE COMMENT set content = ? WHERE COMMENT.id = ?`, [content, Number(commentId)])
+    .then((res) => getComment(conn, commentId))
+    .catch(console.error);
+  console.log(updateComment);
+  await conn.execute(`DELETE FROM MENTION as mt WHERE mt.comment = ?`, [Number(commentId)]);
+  await conn.execute('DELETE FROM COMMENTHASH as ch WHERE ch.comment = ?', [Number(commentId)]);
+  if (hashtags && hashtags.length !== 0) {
+    for (const hashtag of hashtags) {
+      const hashExist = await conn
+        .execute(`SELECT COUNT(*) as count FROM HASHTAG WHERE content = '${hashtag.content}'`)
+        .then((result) => result[0][0].count);
+
+      if (hashExist === 0) {
+        await conn.execute(`INSERT into HASHTAG (content) values (?)`, [hashtag.content]);
+      }
+
+      const hashtagId = await conn
+        .execute(`SELECT id FROM HASHTAG WHERE content = ?`, [hashtag.content])
+        .then((result) => result[0][0]);
+      await conn.execute(`INSERT into COMMENTHASH (comment, hash) values (?, ?)`, [
+        Number(updateComment.id),
+        Number(hashtagId.id),
+      ]);
+    }
+  }
+  if (mentions && mentions.length !== 0) {
+    for (const mention of mentions) {
+      await conn.execute(`INSERT into MENTION (comment, sender, receiver) values (?, ?, ?)`, [
+        Number(updateComment.id),
+        Number(userId),
+        Number(mention.receiver),
+      ]);
+    }
+  }
+  return updateComment;
 }
 export async function remove(conn, commentId) {
   if (commentId !== null) {

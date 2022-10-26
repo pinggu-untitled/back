@@ -57,6 +57,7 @@ export async function getComment(req, res, next) {
 
 //TODO mention, hashtag 추가!
 export async function createComment(req, res, next) {
+  console.log(req.body);
   const { postId } = req.params;
   const { pid, content, hashtags, mentions } = req.body;
   const userId = req.user.id;
@@ -93,10 +94,14 @@ export async function createComment(req, res, next) {
 
 export async function updateComment(req, res, next) {
   const { commentId } = req.params;
-  const { content } = req.body;
+  console.log(req.body);
+  const { content, mentions, hashtags } = req.body;
   const conn = await db.getConnection();
+  const userId = req.user.id;
   try {
-    const updateData = await commentRepository.update(conn, content, commentId);
+    const updateData = await commentRepository
+      .update(conn, userId, content, commentId, mentions, hashtags)
+      .catch(console.error);
     res.status(200).json(updateData);
   } catch (err) {
     logger.error(`Server Error`);
@@ -105,6 +110,20 @@ export async function updateComment(req, res, next) {
     conn.release();
   }
 }
+// export async function updateComment(req, res, next) {
+//   const { commentId } = req.params;
+//   const { content } = req.body;
+//   const conn = await db.getConnection();
+//   try {
+//     const updateData = await commentRepository.update(conn, content, commentId);
+//     res.status(200).json(updateData);
+//   } catch (err) {
+//     logger.error(`Server Error`);
+//     return res.status(500).json(err);
+//   } finally {
+//     conn.release();
+//   }
+// }
 export async function removeComment(req, res, next) {
   const conn = await db.getConnection();
   const { commentId } = req.params;
