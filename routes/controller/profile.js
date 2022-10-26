@@ -46,7 +46,7 @@ export async function updateProfileInfo(req, res, next) {
     // session 정보 변경
     req.session.passport.user.nickname = NEW_USER.nickname;
     req.session.passport.user.profile_image_url = NEW_USER.profile_image_url;
-
+    console.log('hello@@@');
     return res.status(200).json(NEW_USER);
   } catch (err) {
     return res.status(500).json(err);

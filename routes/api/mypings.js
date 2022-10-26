@@ -2,13 +2,39 @@ import express from 'express';
 import Sequelize from 'sequelize';
 import db from '../../models/index.js';
 import { isAccessible } from '../middlewares/accessible.js';
-const { MyPings, SharePings, MyPingsPost, Post, sequelize } = db;
+import { isPrivate } from '../middlewares/private.js';
+const { MyPings, SharePings, MyPingsPost, Post, User, Media, sequelize } = db;
 const { Op } = Sequelize;
 
 const router = express.Router();
 
+/* 사용의 특정 마이핑스 가져오기 */
+router.get('/:mypingsId', isPrivate, (req, res) => {
+  MyPings.findOne({
+    include: [
+      {
+        model: User,
+        as: 'User',
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
+    ],
+    where: {
+      id: req.params.mypingsId,
+    },
+    attributes: ['id', 'title', 'category', 'is_private'],
+  })
+    .then((mypings) => {
+      console.log('mypings>> ', mypings);
+      mypings ? res.status(200).json(mypings) : res.status(404).json({ message: '조회된 마이핑스가 없습니다.' });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'fail' });
+    });
+});
+
 /* 마이핑스 공유하기 */
-router.post('/sharepings/:mypingsId', (req, res) => {
+router.post('/:mypingsId/sharepings', (req, res) => {
   MyPings.findOne({ where: { id: req.params.mypingsId, is_private: 0 }, attributes: ['user'] })
     .then((userObj) => {
       if (!userObj) throw new Error('해당 마이핑스에 접근할 수 없습니다.');
@@ -106,6 +132,55 @@ router.patch('/:mypingsId', isAccessible, async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'fail' });
   }
+});
+
+/* 특정 마이핑스에 속한 포스트 목록 가져오기 */
+/**
+ * SELECT p.id, p.created_at, p.title, p.hits, p.is_private, m.src
+ * FROM POST p INNER JOIN MYPINGSPOST mp ON (mp.post = p.id) LEFT OUTER JOIN MEDIA m ON (m.post = p.id)
+ * WHERE mp.mypings=:mypingsId
+ */
+router.get('/:mypingsId/posts', (req, res) => {
+  MyPingsPost.findAll({ where: { mypings: req.params.mypingsId }, attributes: ['post'] })
+    .then((postArray) => postArray.map((postObj) => postObj.post))
+    .then((postIdArray) =>
+      Post.findAll({
+        include: [
+          {
+            model: Media,
+            as: 'Images',
+            attributes: ['id', 'src'],
+          },
+          {
+            model: User,
+            attributes: ['id', 'nickname', 'profile_image_url'],
+          },
+        ],
+        where: {
+          id: { [Op.in]: postIdArray },
+          [Op.or]: [{ user: req.user.id }, { is_private: 0 }],
+        },
+        attributes: [
+          'id',
+          'created_at',
+          'updated_at',
+          'title',
+          'content',
+          'latitude',
+          'longitude',
+          'hits',
+          'is_private',
+        ],
+        order: [['created_at', 'DESC']],
+      }),
+    )
+    .then((posts) => {
+      posts ? res.status(200).json(posts) : res.status(404).json({ message: '게시물이 없습니다.' });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'fail' });
+    });
 });
 
 /* 포스트 편집용 마이핑스 목록 가져오기 */
