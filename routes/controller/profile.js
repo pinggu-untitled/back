@@ -28,14 +28,13 @@ export async function updateProfileInfo(req, res, next) {
     nickname: req.body.nickname,
     bio: req.body.bio,
     profile_image_url: req.body.profile_image_url,
-  }
+  };
 
   let p_img_orig = req.session.passport.user.profile_image_url;
   const isImage = p_img_orig.indexOf('/https|http/') < 0; // 기존 프로필 사진이 이미지일 경우 true, 링크일 경우 false
 
   const conn = await db.getConnection();
   try {
-
     const result = await profileRepository.updateProfileInfo(conn, NEW_USER);
     p_img_orig = 'uploads/images/profile/' + p_img_orig;
     if (isImage && existsSync(p_img_orig)) {
@@ -49,7 +48,6 @@ export async function updateProfileInfo(req, res, next) {
     req.session.passport.user.profile_image_url = NEW_USER.profile_image_url;
 
     return res.status(200).json(NEW_USER);
-
   } catch (err) {
     return res.status(500).json(err);
   } finally {
