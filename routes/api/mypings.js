@@ -51,6 +51,24 @@ router.post('/:mypingsId/sharepings', (req, res) => {
     });
 });
 
+/* 마이핑스 공유 취소하기 */
+router.delete('/:mypingsId/sharepings', (req, res) => {
+  SharePings.destroy({
+    where: {
+      guest: req.user.id,
+      mypings: req.params.mypingsId,
+    },
+  })
+    .then((result) => {
+      if (result) res.status(200).json({ message: 'success' });
+      else throw new Error('마이핑스가 존재하지 않습니다.');
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'fail' });
+    });
+});
+
 /* 마이핑스 생성 - Unmanaged Transaction */
 router.post('/', async (req, res) => {
   const transaction = await sequelize.transaction();

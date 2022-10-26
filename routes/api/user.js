@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Sequelize from 'sequelize';
+import url from 'url';
 import db from '../../models/index.js';
 const { User, Post, Media, MyPings, SharePings, sequelize } = db;
 const { QueryTypes } = sequelize;
@@ -140,6 +141,39 @@ router.get('/:userId/posts', (req, res) => {
     .then((posts) => res.status(200).json(posts))
     .catch((err) => {
       console.log(err);
+      res.status(500).json({ message: 'fail' });
+    });
+});
+
+/* Test - 지도 범위 내 포스트 가져오기 */
+router.get('/posts/bounds', (req, res) => {
+  const {
+    query: { swLat, swLng, neLat, neLng },
+  } = url.parse(req.originalUrl, true);
+  console.log(swLat, swLng, neLat, neLng);
+
+  Post.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
+      {
+        model: Media,
+        as: 'Images',
+        attributes: ['id', 'src'],
+      },
+    ],
+    where: {
+      latitude: { [Op.between]: [swLat, neLat] },
+      longitude: { [Op.between]: [swLng, neLng] },
+      [Op.or]: [{ user: req.user.id }, { is_private: 0 }],
+    },
+    attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
+  })
+    .then((posts) => res.status(200).json(posts))
+    .catch((err) => {
+      console.error(err);
       res.status(500).json({ message: 'fail' });
     });
 });
