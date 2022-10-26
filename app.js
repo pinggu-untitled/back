@@ -83,6 +83,7 @@ app.listen(app.get('PORT'), () => console.log(`✅ Express 서버 구동 중 htt
 // webSocket(server, app)
 
 makeFolder(`./uploads/images/${time.year}/${time.month}/${time.date}`);
+makeFolder(`./uploads/images/profile`);
 makeFolderScheduler();
 
 await deleteImageScheduler();

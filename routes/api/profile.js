@@ -8,5 +8,3 @@ profileRouter.post('/image', profileUpload.single('image'), profileController.up
 profileRouter.patch('/info', profileController.updateProfileInfo);
 
 export default profileRouter;
-
-//TODO Profile 수정

@@ -1,16 +1,55 @@
 export async function getAll(conn, postId) {
   return conn.execute(`SELECT * FROM COMMENT WHERE COMMENT.post = ?`, [Number(postId)]).then((result) => result[0]);
 }
-export async function create(conn, userId, pid, postId, content) {
-  return await conn
+export async function create(conn, userId, pid, postId, content, hashtags, mentions) {
+  const newComment = await conn
     .execute(`INSERT into COMMENT (user, post, pid, content) values (?, ?, ?, ?)`, [
       Number(userId),
       Number(postId),
       Number(pid) ? Number(pid) : null,
       content,
     ])
-    .then((res) => res[0].insertId);
+    .then((res) => getComment(conn, res[0].insertId));
+  if (hashtags && hashtags.length !== 0) {
+    for (const hashtag of hashtags) {
+      const hashExist = await conn
+        .execute(`SELECT COUNT(*) as count FROM HASHTAG WHERE content = '${hashtag.content}'`)
+        .then((result) => result[0][0].count);
+
+      if (hashExist === 0) {
+        await conn.execute(`INSERT into HASHTAG (content) values (?)`, [hashtag.content]);
+      }
+
+      const hashtagId = await conn
+        .execute(`SELECT id FROM HASHTAG WHERE content = ?`, [hashtag.content])
+        .then((result) => result[0][0]);
+      await conn.execute(`INSERT into COMMENTHASH (comment, hash) values (?, ?)`, [
+        Number(newComment.id),
+        Number(hashtagId.id),
+      ]);
+    }
+  }
+  if (mentions && mentions.length !== 0) {
+    for (const mention of mentions) {
+      await conn.execute(`INSERT into MENTION (comment, sender, receiver) values (?, ?, ?)`, [
+        Number(newComment.id),
+        Number(userId),
+        Number(mention.receiver),
+      ]);
+    }
+  }
+  return newComment;
 }
+// export async function create(conn, userId, pid, postId, content) {
+//   return await conn
+//     .execute(`INSERT into COMMENT (user, post, pid, content) values (?, ?, ?, ?)`, [
+//       Number(userId),
+//       Number(postId),
+//       Number(pid) ? Number(pid) : null,
+//       content,
+//     ])
+//     .then((res) => res[0].insertId);
+// }
 export async function update(conn, content, commentId) {
   return conn.execute(`UPDATE COMMENT set content = ? WHERE COMMENT.id = ?`, [content, Number(commentId)]);
 }
