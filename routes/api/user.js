@@ -150,7 +150,9 @@ router.get('/posts/bounds', (req, res) => {
   const {
     query: { swLat, swLng, neLat, neLng },
   } = url.parse(req.originalUrl, true);
+  console.log('#####################');
   console.log(swLat, swLng, neLat, neLng);
+  console.log('swLng >> ', swLng, typeof swLng);
 
   Post.findAll({
     include: [
@@ -165,8 +167,12 @@ router.get('/posts/bounds', (req, res) => {
       },
     ],
     where: {
-      latitude: { [Op.between]: [swLat, neLat] },
-      longitude: { [Op.between]: [swLng, neLng] },
+      latitude: {
+        [Op.between]: [swLat, neLat],
+      },
+      longitude: {
+        [Op.between]: [swLng, neLng],
+      },
       [Op.or]: [{ user: req.user.id }, { is_private: 0 }],
     },
     attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
