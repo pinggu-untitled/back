@@ -29,7 +29,7 @@ postsRouter.get('/bounds', async (req, res, next) => {
       case 'home':
         result = await conn
           .execute(
-            'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where (po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = ?) or po.user = ?) and ((po.latitude between ? and ?) and (po.longitude between ? and ?)) and po.is_private = 0 ORDER BY po.created_at desc',
+            'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where ((po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = ?) and po.is_private = 0) or po.user = ?) and ((po.latitude between ? and ?) and (po.longitude between ? and ?)) ORDER BY po.created_at desc',
             [Number(userId), Number(userId), swLat, neLat, swLng, neLng],
           )
           .then((result) => result[0]);
