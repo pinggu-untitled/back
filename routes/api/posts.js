@@ -22,7 +22,7 @@ postsRouter.get('/all', postsController.getAllTest);
 postsRouter.get('/bounds', async (req, res, next) => {
   const { swLat, swLng, neLat, neLng, tab } = req.query;
   const conn = await db.getConnection();
-  const userId = 19;
+  const userId = req.user.id;
   try {
     let result;
     let Images;
