@@ -51,8 +51,9 @@ postsRouter.get('/bounds', async (req, res, next) => {
     }
   } catch (err) {
     console.error(err);
-    conn.release();
     return res.status(500).json(err);
+  } finally {
+    conn.release();
   }
 });
 postsRouter.post('/', upload.none(), createPostValidator, postsController.createPost);
