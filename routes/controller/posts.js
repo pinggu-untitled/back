@@ -271,3 +271,37 @@ export async function removePost(req, res, next) {
     conn.release();
   }
 }
+
+export async function getByBounds(req, res, next) {
+  const { swLat, swLng, neLat, neLng, tab } = req.query;
+  const conn = await db.getConnection();
+  const userId = req.user.id;
+  try {
+    let result;
+    switch (tab) {
+      case 'home':
+        result = await postRepository.getByBounds(conn, userId, swLat, neLat, swLng, neLng);
+        result = await Promise.all(
+          result.map(async (post) => {
+            post.Images = await fileRepository.getAll(conn, post.id);
+            if (post.Images.length !== 0) {
+              post.Images = post.Images[0];
+            }
+            return post;
+          }),
+        );
+        return res.status(200).json(result);
+
+      //TODO 탐색탭
+      case 'explore':
+        return res.status(200).json(result);
+      default:
+        return res.status(403).json({ message: 'invalid tab' });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json(err);
+  } finally {
+    conn.release();
+  }
+}
