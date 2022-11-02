@@ -275,7 +275,7 @@ export async function removePost(req, res, next) {
 export async function getByBounds(req, res, next) {
   const { swLat, swLng, neLat, neLng, tab } = req.query;
   const conn = await db.getConnection();
-  const userId = req.user.id;
+  const userId = 19;
   try {
     let result;
     switch (tab) {
@@ -311,7 +311,7 @@ export async function getByBounds(req, res, next) {
                 nickname: post.nickname,
                 profile_image_url: post.profile_image_url,
               },
-              Images,
+              Images: post.Images,
             };
           }),
         );
