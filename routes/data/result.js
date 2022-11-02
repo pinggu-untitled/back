@@ -104,15 +104,7 @@ export async function getMyPingsByCategory(conn, query) {
 export async function getPostByHashtag(conn, query) {
   return await conn
     .execute(
-      `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url 
-	FROM POST as ps 
-    join USER as us 
-    on ps.user = us.id
-    WHERE ps.id in 
-    (select ph.post from HASHTAG as ht 
-	join POSTHASH as ph 
-    on ht.id = ph.hash 
-    WHERE content like '%${query}%');`,
+      `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as ps join USER as us on ps.user = us.id WHERE ps.id in (select ph.post from HASHTAG as ht join POSTHASH as ph on ht.id = ph.hash WHERE content like '%${query}%');`,
     )
     .then((res) => res[0])
     .then((res) => {
