@@ -178,3 +178,12 @@ export async function getPostMentions(conn, userId, postId) {
 export async function updateHits(conn, postId) {
   conn.execute('UPDATE POST SET hits = hits + 1 where id = ?', [Number(postId)]);
 }
+
+export async function getByBounds(conn, userId, swLat, neLat, swLng, neLng) {
+  return conn
+    .execute(
+      'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where ((po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = ?) and po.is_private = 0) or po.user = ?) and ((po.latitude between ? and ?) and (po.longitude between ? and ?))',
+      [Number(userId), Number(userId), swLat, neLat, swLng, neLng],
+    )
+    .then((result) => result[0]);
+}

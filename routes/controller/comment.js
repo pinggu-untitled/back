@@ -55,7 +55,6 @@ export async function getComment(req, res, next) {
   }
 }
 
-//TODO mention, hashtag 추가!
 export async function createComment(req, res, next) {
   console.log(req.body);
   const { postId } = req.params;
