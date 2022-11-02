@@ -292,7 +292,10 @@ export async function getByBounds(req, res, next) {
         // );
         result = await Promise.all(
           result.map(async (post) => {
-            const Images = await fileRepository.getAll(conn, post.id);
+            post.Images = await fileRepository.getAll(conn, post.id);
+            if (post.Images.length !== 0) {
+              post.Images = post.Images[0];
+            }
             return {
               id: post.id,
               title: post.title,
