@@ -281,13 +281,35 @@ export async function getByBounds(req, res, next) {
     switch (tab) {
       case 'home':
         result = await postRepository.getByBounds(conn, userId, swLat, neLat, swLng, neLng);
+        // result = await Promise.all(
+        //   result.map(async (post) => {
+        //     post.Images = await fileRepository.getAll(conn, post.id);
+        //     if (post.Images.length !== 0) {
+        //       post.Images = post.Images[0];
+        //     }
+        //     return post;
+        //   }),
+        // );
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = await fileRepository.getAll(conn, post.id);
-            if (post.Images.length !== 0) {
-              post.Images = post.Images[0];
-            }
-            return post;
+            const Images = await fileRepository.getAll(conn, post.id);
+            return {
+              id: post.id,
+              title: post.title,
+              content: post.content,
+              longitude: post.longitude,
+              latitude: post.latitude,
+              hits: post.hits,
+              is_private: post.is_private,
+              created_at: post.created_at,
+              updated_at: post.updated_at,
+              User: {
+                id: post.userId,
+                nickname: post.nickname,
+                profile_image_url: post.profile_image_url,
+              },
+              Images,
+            };
           }),
         );
         return res.status(200).json(result);
