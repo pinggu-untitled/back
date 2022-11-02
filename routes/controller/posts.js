@@ -275,7 +275,7 @@ export async function removePost(req, res, next) {
 export async function getByBounds(req, res, next) {
   const { swLat, swLng, neLat, neLng, tab, filter, keyword } = req.query;
   const conn = await db.getConnection();
-  const userId = req.user.id;
+  const userId = 19;
   try {
     let result;
     switch (tab) {
@@ -294,7 +294,7 @@ export async function getByBounds(req, res, next) {
           result.map(async (post) => {
             post.Images = await fileRepository.getAll(conn, post.id);
             if (post.Images.length !== 0) {
-              post.Images = post.Images[0];
+              post.Images = [post.Images[0]];
             }
             return {
               id: post.id,
