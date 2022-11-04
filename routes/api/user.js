@@ -126,6 +126,10 @@ router.get('/:userId/posts', isLoggedIn, (req, res) => {
   Post.findAll({
     include: [
       {
+        model: User,
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
+      {
         model: Media,
         as: 'Images',
         attributes: ['id', 'src'],
