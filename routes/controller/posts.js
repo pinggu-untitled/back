@@ -72,6 +72,7 @@ export async function getPosts(req, res, next) {
           profile_image_url,
         }) => {
           const Images = await fileRepository.getAll(conn, id);
+          const Likers = await likeRepository.getAll(conn, id);
           return {
             id,
             title,
@@ -88,6 +89,7 @@ export async function getPosts(req, res, next) {
               profile_image_url,
             },
             Images,
+            Likers,
           };
         },
       ),
