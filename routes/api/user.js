@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Sequelize from 'sequelize';
 import url from 'url';
 import db from '../../models/index.js';
-import { isLoggedIn } from '../middlewares/login';
+import { isLoggedIn } from '../middlewares/login.js';
 const { User, Post, Media, MyPings, SharePings, Liked, sequelize } = db;
 const { QueryTypes } = sequelize;
 const { Op } = Sequelize;

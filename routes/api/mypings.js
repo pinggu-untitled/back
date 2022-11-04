@@ -37,7 +37,7 @@ router.get('/:mypingsId', isPrivate, (req, res) => {
 router.post('/:mypingsId/sharepings', (req, res) => {
   MyPings.findOne({ where: { id: req.params.mypingsId, is_private: 0 }, attributes: ['user'] })
     .then((userObj) => {
-      if (!userObj) throw new Error('해당 마이핑스에 접근할 수 없습니다.');
+      if (!userObj || userObj.dataValues?.user === req.user?.id) throw new Error('해당 마이핑스를 공유할 수 없습니다.');
       SharePings.create({
         host: userObj.dataValues?.user,
         guest: req.user?.id,
