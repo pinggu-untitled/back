@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Sequelize from 'sequelize';
 import url from 'url';
 import db from '../../models/index.js';
-const { User, Post, Media, MyPings, SharePings, sequelize } = db;
+const { User, Post, Media, MyPings, SharePings, Liked, sequelize } = db;
 const { QueryTypes } = sequelize;
 const { Op } = Sequelize;
 
@@ -12,7 +12,7 @@ const router = Router();
 router.get('/me', (req, res) => {
   if (req.user?.id) {
     res.status(200).json(req.session.passport.user);
-  } else res.status(500).json(null);
+  } else res.status(200).json(null);
 });
 
 /* 모든 사용자 정보 가져오기 */
@@ -130,8 +130,15 @@ router.get('/:userId/posts', (req, res) => {
         attributes: ['id', 'src'],
       },
       {
-        model: User,
-        attributes: ['id', 'nickname', 'profile_image_url'],
+        model: Liked,
+        include: [
+          {
+            model: User,
+            attributes: ['id', 'nickname', 'profile_image_url'],
+          },
+        ],
+        as: 'Likers',
+        attributes: ['id'],
       },
     ],
     attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
