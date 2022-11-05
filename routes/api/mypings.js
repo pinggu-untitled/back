@@ -165,9 +165,14 @@ router.get('/:mypingsId/posts', (req, res) => {
       Post.findAll({
         include: [
           {
-            model: User,
+            model: Liked,
             as: 'Likers',
-            attributes: ['id', 'nickname', 'profile_image_url'],
+            include: [
+              {
+                model: User,
+                attributes: ['id', 'nickname', 'profile_image_url'],
+              },
+            ],
           },
           {
             model: Media,
