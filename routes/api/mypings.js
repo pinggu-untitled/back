@@ -173,6 +173,7 @@ router.get('/:mypingsId/posts', (req, res) => {
                 attributes: ['id', 'nickname', 'profile_image_url'],
               },
             ],
+            attributes: ['id'],
           },
           {
             model: Media,
