@@ -3,7 +3,7 @@ import Sequelize from 'sequelize';
 import db from '../../models/index.js';
 import { isAccessible } from '../middlewares/accessible.js';
 import { isPrivate } from '../middlewares/private.js';
-const { MyPings, SharePings, MyPingsPost, Post, User, Media, sequelize } = db;
+const { MyPings, SharePings, MyPingsPost, Post, User, Media, Liked, sequelize } = db;
 const { Op } = Sequelize;
 
 const router = express.Router();
@@ -164,6 +164,11 @@ router.get('/:mypingsId/posts', (req, res) => {
     .then((postIdArray) =>
       Post.findAll({
         include: [
+          {
+            model: Liked,
+            as: 'Likers',
+            attributes: ['id', 'nickname', 'profile_image_url'],
+          },
           {
             model: Media,
             as: 'Images',
