@@ -14,7 +14,7 @@ const router = Router();
 
 router.use('/auth', auth);
 router.use('/profile', isLoggedIn, profile);
-router.use('/users', isLoggedIn, user);
+router.use('/users', user);
 router.use('/follow', isLoggedIn, follow);
 router.use('/mypings', isLoggedIn, mypings);
 router.use('/posts', isLoggedIn, posts);
