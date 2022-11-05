@@ -165,7 +165,7 @@ router.get('/:mypingsId/posts', (req, res) => {
       Post.findAll({
         include: [
           {
-            model: Liked,
+            model: User,
             as: 'Likers',
             attributes: ['id', 'nickname', 'profile_image_url'],
           },
