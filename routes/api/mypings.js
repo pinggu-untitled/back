@@ -303,7 +303,6 @@ router.delete('/:mypingsId', isAccessible, async (req, res) => {
       await MyPingsPost.destroy({
         where: {
           mypings: req.params.mypingsId,
-          user: req.user?.id,
         },
         transaction,
       });
@@ -312,7 +311,7 @@ router.delete('/:mypingsId', isAccessible, async (req, res) => {
       await SharePings.destroy({
         where: {
           mypings: req.params.mypingsId,
-          user: req.user?.id,
+          host: req.user?.id,
         },
         transaction,
       });
