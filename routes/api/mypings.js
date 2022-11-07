@@ -140,7 +140,7 @@ router.patch('/:mypingsId', isAccessible, async (req, res) => {
       /* MYPINGS_POST 테이블에 INSERT */
       if (Array.isArray(req.body.selPosts) && req.body.selPosts.length !== 0) {
         const mypingsPostData = req.body.selPosts.map((postId) => {
-          return { mypings: req.body.mypingsId, post: postId };
+          return { mypings: req.params.mypingsId, post: postId };
         });
         await MyPingsPost.bulkCreate(mypingsPostData, { transaction });
       }
