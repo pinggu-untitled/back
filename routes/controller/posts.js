@@ -51,8 +51,6 @@ export async function getAllTest(req, res, next) {
 export async function getPosts(req, res, next) {
   const conn = await db.getConnection();
   const userId = req.user.id;
-  const size = Number(req.query.size);
-  const page = Number(req.query.page);
   try {
     const data = await postRepository.getFollowing(conn, userId);
     const result = await Promise.all(
@@ -95,6 +93,8 @@ export async function getPosts(req, res, next) {
       ),
     );
 
+    const size = Number(req.query.size);
+    const page = Number(req.query.page);
     // const result = data.map((post) => ({
     //   id: post.id,
     //   title: post.title,
@@ -114,17 +114,17 @@ export async function getPosts(req, res, next) {
     // const totalCount = result.length;
     // const totalPages = Math.round(totalCount / size);
 
-    // setTimeout(() => {
-    //   return res.status(200).json({
-    //     contents: result.slice(page * size, (page + 1) * size),
-    //     pageNumber: page,
-    //     pageSize: size,
-    //     totalPages,
-    //     totalCount,
-    //     isLastPage: totalPages <= page,
-    //     isFirstPage: page === 0,
-    //   });
-    // }, 300);
+    setTimeout(() => {
+      return res.status(200).json({
+        contents: result.slice(page * size, (page + 1) * size),
+        pageNumber: page,
+        pageSize: size,
+        totalPages,
+        totalCount,
+        isLastPage: totalPages <= page,
+        isFirstPage: page === 0,
+      });
+    }, 300);
     return res.status(200).json(result);
   } catch (err) {
     logger.error(`Server Error`);
