@@ -72,6 +72,7 @@ export async function getPosts(req, res, next) {
           profile_image_url,
         }) => {
           const Images = await fileRepository.getAll(conn, id);
+          const Likers = await likeRepository.getAll(conn, id);
           return {
             id,
             title,
@@ -80,14 +81,15 @@ export async function getPosts(req, res, next) {
             latitude,
             hits,
             is_private,
-            created_at,
-            updated_at,
+            created_at: transDate(created_at),
+            updated_at: transDate(updated_at),
             User: {
               id: userId,
               nickname,
               profile_image_url,
             },
             Images,
+            Likers,
           };
         },
       ),
@@ -154,8 +156,8 @@ export async function getPost(req, res, next) {
       id: comment.id,
       content: comment.content,
       pid: comment.pid,
-      created_at: comment.created_at,
-      updated_at: comment.updated_at,
+      created_at: transDate(comment.created_at),
+      updated_at: transDate(comment.updated_at),
       User: {
         id: comment.userId,
         nickname: comment.nickname,
@@ -166,8 +168,8 @@ export async function getPost(req, res, next) {
       id: comment.id,
       content: comment.content,
       pid: comment.pid,
-      created_at: comment.created_at,
-      updated_at: comment.updated_at,
+      created_at: transDate(comment.created_at),
+      updated_at: transDate(comment.updated_at),
       User: {
         id: comment.userId,
         nickname: comment.nickname,
@@ -266,6 +268,91 @@ export async function removePost(req, res, next) {
   } catch (err) {
     await conn.rollback();
     logger.error(`Server Error`);
+    return res.status(500).json(err);
+  } finally {
+    conn.release();
+  }
+}
+
+export async function getByBounds(req, res, next) {
+  const { swLat, swLng, neLat, neLng, tab, filter, keyword } = req.query;
+  const conn = await db.getConnection();
+  const userId = req.user.id;
+  try {
+    let result;
+    switch (tab) {
+      case 'home':
+        result = await postRepository.getByBoundsInHome(conn, userId, swLat, neLat, swLng, neLng);
+        // result = await Promise.all(
+        //   result.map(async (post) => {
+        //     post.Images = await fileRepository.getAll(conn, post.id);
+        //     if (post.Images.length !== 0) {
+        //       post.Images = post.Images[0];
+        //     }
+        //     return post;
+        //   }),
+        // );
+        result = await Promise.all(
+          result.map(async (post) => {
+            post.Images = await fileRepository.getAll(conn, post.id);
+            if (post.Images.length !== 0) {
+              post.Images = [post.Images[0]];
+            }
+            return {
+              id: post.id,
+              title: post.title,
+              content: post.content,
+              longitude: post.longitude,
+              latitude: post.latitude,
+              hits: post.hits,
+              is_private: post.is_private,
+              created_at: transDate(post.created_at),
+              updated_at: transDate(post.updated_at),
+              User: {
+                id: post.userId,
+                nickname: post.nickname,
+                profile_image_url: post.profile_image_url,
+              },
+              Images: post.Images,
+            };
+          }),
+        );
+        return res.status(200).json(result);
+
+      //TODO 탐색탭
+      case 'explore':
+        result = await postRepository.getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, filter, keyword);
+        result = await Promise.all(
+          result.map(async (post) => {
+            post.Images = await fileRepository.getAll(conn, post.id);
+            if (post.Images.length !== 0) {
+              post.Images = post.Images[0];
+            }
+            return {
+              id: post.id,
+              title: post.title,
+              content: post.content,
+              longitude: post.longitude,
+              latitude: post.latitude,
+              hits: post.hits,
+              is_private: post.is_private,
+              created_at: transDate(post.created_at),
+              updated_at: transDate(post.updated_at),
+              User: {
+                id: post.userId,
+                nickname: post.nickname,
+                profile_image_url: post.profile_image_url,
+              },
+              Images: post.Images,
+            };
+          }),
+        );
+        return res.status(200).json(result);
+      default:
+        return res.status(403).json({ message: 'invalid tab' });
+    }
+  } catch (err) {
+    console.error(err);
     return res.status(500).json(err);
   } finally {
     conn.release();

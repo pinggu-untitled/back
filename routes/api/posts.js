@@ -18,8 +18,9 @@ const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
 postsRouter.get('/all', postsController.getAllTest);
-// TODO 지도 범위 내에 등록된 포스트 조회
-postsRouter.get('/bounds', async (req, res, next) => {
+postsRouter.get('/bounds', postsController.getByBounds);
+/*
+async (req, res, next) => {
   const { swLat, swLng, neLat, neLng, tab } = req.query;
   const conn = await db.getConnection();
   const userId = req.user.id;
@@ -51,10 +52,12 @@ postsRouter.get('/bounds', async (req, res, next) => {
     }
   } catch (err) {
     console.error(err);
-    conn.release();
     return res.status(500).json(err);
+  } finally {
+    conn.release();
   }
-});
+}
+*/
 postsRouter.post('/', upload.none(), createPostValidator, postsController.createPost);
 
 postsRouter.post('/images', upload.array('images'), postsController.createMedia);

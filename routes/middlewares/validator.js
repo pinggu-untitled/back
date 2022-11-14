@@ -51,6 +51,7 @@ export async function postIsExist(req, res, next) {
   const post = await postRepository.getById(conn, postId);
   if (post === undefined) {
     logger.error(`Not Found id: ${postId} Post`);
+    conn.release();
     return res.status(404).json({ success: 'fail', message: '포스트가 존재하지 않습니다.' });
   }
   conn.release();
@@ -64,6 +65,7 @@ export async function commentIsExist(req, res, next) {
 
   if (comment === undefined) {
     logger.error(`Not Found id: ${commentId} comment`);
+    conn.release();
     return res.status(404).json({ success: 'fail', message: '댓글이 존재하지 않습니다.' });
   }
   conn.release();
