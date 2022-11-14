@@ -12,7 +12,7 @@ router.get(
     failureRedirect: '/',
   }),
   (req, res) => {
-    res.redirect('http://localhost:3000');
+    res.redirect('https://localhost');
   },
 );
 
@@ -30,7 +30,7 @@ router.get(
     failureRedirect: '/',
   }),
   (req, res) => {
-    res.redirect('http://localhost:3000');
+    res.redirect('https://localhost');
   },
 );
 
@@ -45,7 +45,7 @@ router.get('/logout', (req, res) => {
     req.logout((err) => {
       if (err) return next(err);
       req.session.destroy();
-      res.redirect('http://localhost:3000');
+      res.redirect('https://localhost');
     });
   }
 });
@@ -54,7 +54,7 @@ router.get('/logout/kakao/callback', (req, res) => {
   req.logout((err) => {
     if (err) return next(err);
     req.session.destroy();
-    res.redirect('http://localhost:3000');
+    res.redirect('https://localhost');
   });
 });
 
