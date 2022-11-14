@@ -115,17 +115,18 @@ export async function getPosts(req, res, next) {
     const totalPages = Math.round(totalCount / size);
 
     // setTimeout(() => {
-    return res.status(200).json({
-      contents: result.slice(page * size, (page + 1) * size),
-      pageNumber: page,
-      pageSize: size,
-      totalPages,
-      totalCount,
-      isLastPage: totalPages <= page,
-      isFirstPage: page === 0,
-    });
+    // return res.status(200).json({
+    //   // contents: result.slice(page * size, (page + 1) * size),
+    //   // pageNumber: page,
+    //   // pageSize: size,
+    //   // totalPages,
+    //   // totalCount,
+    //   // isLastPage: totalPages <= page,
+    //   // isFirstPage: page === 0,
+    // });
     // }, 300);
     // return res.status(200).json(result);
+    return res.status(200).json(result.slice(page * size, (page + 1) * size));
   } catch (err) {
     logger.error(`Server Error`);
     return res.status(500).json(err);
