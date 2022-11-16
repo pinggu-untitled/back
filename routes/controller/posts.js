@@ -1,7 +1,8 @@
 import { db } from '../../config/mysql.js';
-import { postRepository, likeRepository, commentRepository, fileRepository } from '../data/index.js';
+import { commentRepository, fileRepository, likeRepository, postRepository } from '../data/index.js';
 import logger from '../../config/logger.js';
 import { transDate } from '../../utils/date.js';
+
 export const rand = (start, end) => {
   return Math.floor(Math.random() * (end - start + 1)) + start;
 };
@@ -49,10 +50,16 @@ export async function getAllTest(req, res, next) {
 
 // 팔로우 한 사람들 게시물 모두 가져오기
 export async function getPosts(req, res, next) {
+  console.time('xxx');
   const conn = await db.getConnection();
+  console.timeLog('xxx');
   const userId = req.user.id;
+  // const userId = 7;
   try {
     const data = await postRepository.getFollowing(conn, userId);
+    const ids = data.map((dt) => dt.id);
+    const allImages = await fileRepository.getByIds(conn, ids);
+    const allLikers = await likeRepository.getByIds(conn, ids);
     const result = await Promise.all(
       data.map(
         async ({
@@ -69,8 +76,9 @@ export async function getPosts(req, res, next) {
           nickname,
           profile_image_url,
         }) => {
-          const Images = await fileRepository.getAll(conn, id);
-          const Likers = await likeRepository.getAll(conn, id);
+          // const Images = await fileRepository.getAll(conn, id);
+          const Images = allImages.filter((img) => img.post === id);
+          const Likers = allLikers.filter((post => post.id === id));
           return {
             id,
             title,
@@ -79,8 +87,8 @@ export async function getPosts(req, res, next) {
             latitude,
             hits,
             is_private,
-            created_at: transDate(created_at),
-            updated_at: transDate(updated_at),
+            created_at,
+            updated_at,
             User: {
               id: userId,
               nickname,
@@ -92,6 +100,8 @@ export async function getPosts(req, res, next) {
         },
       ),
     );
+
+    console.timeEnd('xxx');
 
     const size = Number(req.query.size);
     const page = Number(req.query.page);
@@ -157,8 +167,8 @@ export async function getPost(req, res, next) {
       id: comment.id,
       content: comment.content,
       pid: comment.pid,
-      created_at: transDate(comment.created_at),
-      updated_at: transDate(comment.updated_at),
+      created_at: comment.created_at,
+      updated_at: comment.updated_at,
       User: {
         id: comment.userId,
         nickname: comment.nickname,
@@ -169,8 +179,8 @@ export async function getPost(req, res, next) {
       id: comment.id,
       content: comment.content,
       pid: comment.pid,
-      created_at: transDate(comment.created_at),
-      updated_at: transDate(comment.updated_at),
+      created_at: comment.created_at,
+      updated_at: comment.updated_at,
       User: {
         id: comment.userId,
         nickname: comment.nickname,
@@ -189,8 +199,8 @@ export async function getPost(req, res, next) {
     post.User = { id: userId, nickname, profile_image_url };
     post.Comments = Comments;
     post.Likers = Likers;
-    post.created_at = transDate(post.created_at);
-    post.updated_at = transDate(post.updated_at);
+    post.created_at = post.created_at;
+    post.updated_at = post.updated_at;
 
     return res.status(200).json({ ...post });
   } catch (err) {
@@ -281,6 +291,8 @@ export async function getByBounds(req, res, next) {
   const userId = req.user.id;
   try {
     let result;
+    let ids;
+    let allImages;
     switch (tab) {
       case 'home':
         result = await postRepository.getByBoundsInHome(conn, userId, swLat, neLat, swLng, neLng);
@@ -293,9 +305,11 @@ export async function getByBounds(req, res, next) {
         //     return post;
         //   }),
         // );
+        ids = result.map((dt) => dt.id);
+        allImages = await fileRepository.getByIds(conn, ids);
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = await fileRepository.getAll(conn, post.id);
+            post.Images = allImages.filter(img => img.id === post.id);
             if (post.Images.length !== 0) {
               post.Images = [post.Images[0]];
             }
@@ -323,9 +337,11 @@ export async function getByBounds(req, res, next) {
       //TODO 탐색탭
       case 'explore':
         result = await postRepository.getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, filter, keyword);
+        ids = result.map((dt) => dt.id);
+        allImages = await fileRepository.getByIds(conn, ids);
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = await fileRepository.getAll(conn, post.id);
+            post.Images = allImages.filter(img => img.id === post.id);
             if (post.Images.length !== 0) {
               post.Images = post.Images[0];
             }

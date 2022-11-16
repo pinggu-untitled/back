@@ -7,7 +7,6 @@ import posts from './posts.js';
 import results from './results.js';
 import searchHistories from './searchHistories.js';
 import profile from './profile.js';
-import {} from 'express-async-errors';
 import { isLoggedIn } from '../middlewares/login.js';
 
 const router = Router();
@@ -17,8 +16,9 @@ router.use('/profile', isLoggedIn, profile);
 router.use('/users', user);
 router.use('/follow', isLoggedIn, follow);
 router.use('/mypings', isLoggedIn, mypings);
+// router.use('/results', isLoggedIn, results);
 router.use('/posts', isLoggedIn, posts);
-router.use('/results', isLoggedIn, results);
+router.use('/posts', posts);
 router.use('/search_histories', isLoggedIn, searchHistories);
 
 export default router;
