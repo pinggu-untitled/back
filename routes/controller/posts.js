@@ -1,60 +1,11 @@
 import { db } from '../../config/mysql.js';
 import { commentRepository, fileRepository, likeRepository, postRepository } from '../data/index.js';
 import logger from '../../config/logger.js';
-import { transDate } from '../../utils/date.js';
-
-export const rand = (start, end) => {
-  return Math.floor(Math.random() * (end - start + 1)) + start;
-};
-
-// 로그인 기능 합치기 전 랜덤 유저 id 뽑기
-// export const USER_NUMBER = rand(1, 10);
-
-export async function getAllTest(req, res, next) {
-  const conn = await db.getConnection();
-  const userId = req.user.id;
-
-  try {
-    const data = await postRepository.getAll(conn);
-    const result = await Promise.all(
-      data.map(async (post) => {
-        const Images = await fileRepository.getAll(conn, post.id);
-        return {
-          id: post.id,
-          title: post.title,
-          content: post.content,
-          longitude: post.longitude,
-          latitude: post.latitude,
-          hits: post.hits,
-          is_private: post.is_private,
-          created_at: post.created_at,
-          updated_at: post.updated_at,
-          User: {
-            id: post.userId,
-            nickname: post.nickname,
-            profile_image_url: post.profile_image_url,
-          },
-          Images,
-        };
-      }),
-    );
-
-    return res.status(200).json(result);
-  } catch (err) {
-    logger.error(`Server Error`);
-    return res.status(500).json(err);
-  } finally {
-    conn.release();
-  }
-}
 
 // 팔로우 한 사람들 게시물 모두 가져오기
 export async function getPosts(req, res, next) {
-  console.time('xxx');
   const conn = await db.getConnection();
-  console.timeLog('xxx');
   const userId = req.user.id;
-  // const userId = 7;
   try {
     const data = await postRepository.getFollowing(conn, userId);
     const ids = data.map((dt) => dt.id);
@@ -76,7 +27,6 @@ export async function getPosts(req, res, next) {
           nickname,
           profile_image_url,
         }) => {
-          // const Images = await fileRepository.getAll(conn, id);
           const Images = allImages.filter((img) => img.post === id);
           const Likers = allLikers.filter((post => post.id === id));
           return {
@@ -105,37 +55,11 @@ export async function getPosts(req, res, next) {
 
     const size = Number(req.query.size);
     const page = Number(req.query.page);
-    // const result = data.map((post) => ({
-    //   id: post.id,
-    //   title: post.title,
-    //   content: post.content,
-    //   longitude: post.longitude,
-    //   latitude: post.latitude,
-    //   hits: post.hits,
-    //   is_private: post.is_private,
-    //   created_at: post.created_at,
-    //   updated_at: post.updated_at,
-    //   User: {
-    //     id: post.userId,
-    //     nickname: post.nickname,
-    //     profile_image_url: post.profile_image_url,
-    //   },
-    // }));
-    // const totalCount = result.length;
-    // const totalPages = Math.round(totalCount / size);
 
-    // setTimeout(() => {
-    //   return res.status(200).json({
-    //     contents: result.slice(page * size, (page + 1) * size),
-    //     pageNumber: page,
-    //     pageSize: size,
-    //     totalPages,
-    //     totalCount,
-    //     isLastPage: totalPages <= page,
-    //     isFirstPage: page === 0,
-    //   });
-    // }, 300);
-    return res.status(200).json(result);
+    
+    return res.status(200).json(
+      result.slice(page * size, (page + 1) * size),
+    );
   } catch (err) {
     logger.error(`Server Error`);
     return res.status(500).json(err);

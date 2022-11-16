@@ -15,7 +15,6 @@ import { isPrivate } from './../middlewares/private.js';
 const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
-postsRouter.get('/all', postsController.getAllTest);
 postsRouter.get('/bounds', postsController.getByBounds);
 postsRouter.post('/', upload.none(), createPostValidator, postsController.createPost);
 
