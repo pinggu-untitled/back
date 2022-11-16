@@ -1,8 +1,14 @@
 export async function getByIds(conn, ids) {
+  const str = ids
+    .reduce((sum) => {
+      sum.push('?');
+      return sum;
+    }, [])
+    .join(',');
   return conn
     .execute(
-      `SELECT li.user as id, li.post as post, us.nickname, us.profile_image_url FROM LIKED as li join USER as us on li.user = us.id WHERE li.post in (?) ORDER BY li.created_at`,
-      [ids],
+      `SELECT li.user as id, li.post as post, us.nickname, us.profile_image_url FROM LIKED as li join USER as us on li.user = us.id WHERE li.post in (${str}) ORDER BY li.created_at`,
+      ids,
     )
     .then((result) => result[0]);
 }
@@ -14,9 +20,6 @@ export async function getAll(conn, postId) {
     )
     .then((result) => result[0]);
 }
-
-
-
 
 export async function create(conn, postId, userId) {
   return conn.execute('INSERT into LIKED (post, user) values (?, ?)', [Number(postId), userId]);

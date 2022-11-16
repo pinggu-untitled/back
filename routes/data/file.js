@@ -6,7 +6,15 @@ export async function getAll(conn, postId) {
 }
 
 export async function getByIds(conn, ids) {
-  return conn.execute('SELECT md.id, md.src FROM MEDIA as md WHERE md.post in (?)', [ids]).then((result) => result[0]);
+  const str = ids
+    .reduce((sum) => {
+      sum.push('?');
+      return sum;
+    }, [])
+    .join(',');
+  return conn
+    .execute(`SELECT md.id, md.src FROM MEDIA as md WHERE md.post in (${str})`, ids)
+    .then((result) => result[0]);
 }
 
 export async function create(conn, userId, file, postId) {

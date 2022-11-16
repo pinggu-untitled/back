@@ -5,7 +5,8 @@ import logger from '../../config/logger.js';
 // 팔로우 한 사람들 게시물 모두 가져오기
 export async function getPosts(req, res, next) {
   const conn = await db.getConnection();
-  const userId = req.user.id;
+  // const userId = req.user.id;
+  const userId = 7;
   try {
     const data = await postRepository.getFollowing(conn, userId);
     const ids = data.map((dt) => dt.id);
@@ -227,7 +228,6 @@ export async function getByBounds(req, res, next) {
         // );
         ids = result.map((dt) => dt.id);
         allImages = await fileRepository.getByIds(conn, ids);
-        console.log('xxxx');
         result = await Promise.all(
           result.map(async (post) => {
             post.Images = allImages.filter((img) => img.id === post.id);
