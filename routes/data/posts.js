@@ -193,7 +193,7 @@ export async function getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, fil
     case 'title':
       return conn
         .execute(
-          `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as ps join USER as us on ps.user = us.id WHERE ps.title like '%${keyword}%' and (po.latitude between ? and ?) and (po.longitude between ? and ?)`,
+          `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as ps join USER as us on ps.user = us.id WHERE ps.title like '%${keyword}%' and (ps.latitude between ? and ?) and (ps.longitude between ? and ?)`,
           [swLat, neLat, swLng, neLng],
         )
         .then((result) => result[0]);
