@@ -16,9 +16,10 @@ router.use('/profile', isLoggedIn, profile);
 router.use('/users', user);
 router.use('/follow', isLoggedIn, follow);
 router.use('/mypings', isLoggedIn, mypings);
-// router.use('/results', isLoggedIn, results);
+router.use('/results', isLoggedIn, results);
+// router.use('/results', results);
 router.use('/posts', isLoggedIn, posts);
-router.use('/posts', posts);
+// router.use('/posts', posts);
 router.use('/search_histories', isLoggedIn, searchHistories);
 
 export default router;
