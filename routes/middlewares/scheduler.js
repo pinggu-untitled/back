@@ -27,7 +27,7 @@ export default time;
 export function makeFolderScheduler() {
   cron.schedule('0 0 0 * * *', () => {
     console.log('폴더 생성 스케줄러 실행!');
-    makeFolder(`./upload/images/${time.year}/${time.month}/${time.date}`);
+    makeFolder(`./uploads/images/${time.year}/${time.month}/${time.date}`);
   });
 }
 

@@ -21,6 +21,7 @@ export async function updateProfileInfo(req, res, next) {
   // test 값 끝
 
   // 변경사항이 하나도 없는데 호출되었을 때
+  console.log('hello@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
   if (!req.body.nickname && !req.body.bio && !req.body.profile_image_url) return res.status(400).json(err);
 
   const NEW_USER = {
