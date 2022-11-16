@@ -11,53 +11,11 @@ import { postsController, commentController, likedController } from '../controll
 import { upload } from '../middlewares/upload.js';
 import { isAccessible } from './../middlewares/accessible.js';
 import { isPrivate } from './../middlewares/private.js';
-import { db } from '../../config/mysql.js';
-import { fileRepository } from '../data/index.js';
 
 const postsRouter = express.Router();
 
 postsRouter.get('/', postsController.getPosts);
-postsRouter.get('/all', postsController.getAllTest);
 postsRouter.get('/bounds', postsController.getByBounds);
-/*
-async (req, res, next) => {
-  const { swLat, swLng, neLat, neLng, tab } = req.query;
-  const conn = await db.getConnection();
-  const userId = req.user.id;
-  try {
-    let result;
-    let Images;
-    switch (tab) {
-      case 'home':
-        result = await conn
-          .execute(
-            'SELECT po.id, po.title, po.content, po.longitude, po.latitude, po.hits, po.is_private, po.created_at, po.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as po join USER as us on po.user = us.id where ((po.user in (SELECT distinct fo.follow from FOLLOW as fo where fo.host = ?) and po.is_private = 0) or po.user = ?) and ((po.latitude between ? and ?) and (po.longitude between ? and ?))',
-            [Number(userId), Number(userId), swLat, neLat, swLng, neLng],
-          )
-          .then((result) => result[0]);
-        result = await Promise.all(
-          result.map(async (post) => {
-            post.Images = await fileRepository.getAll(conn, post.id);
-            if (post.Images.length !== 0) {
-              post.Images = post.Images[0];
-            }
-            return post;
-          }),
-        );
-        return res.status(200).json(result);
-      case 'explore':
-        return res.status(200).json(result);
-      default:
-        return res.status(403).json({ message: 'invalid tab' });
-    }
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json(err);
-  } finally {
-    conn.release();
-  }
-}
-*/
 postsRouter.post('/', upload.none(), createPostValidator, postsController.createPost);
 
 postsRouter.post('/images', upload.array('images'), postsController.createMedia);
