@@ -12,15 +12,17 @@ export async function getResult(req, res, next) {
         ids = post.map((dt) => dt.id);
         allImages = await fileRepository.getByIds(conn, ids);
         allLikers = await likeRepository.getByIds(conn, ids);
-        post = post.map((post) => {
-          const Images = allImages.filter((img) => img.post === id);
-          const Likers = allLikers.filter((liker) => liker.post === id);
+        post = post.map((el) => {
+          const Images = allImages.filter((img) => img.post === el.id);
+          const Likers = allLikers.filter((liker) => liker.post === el.id);
           return {
-            ...post,
+            ...el,
             Images,
             Likers,
           };
         });
+        console.log('hello');
+        console.log('>>>>>>>>', post);
         // mypings = await resultRepository.getMyPingsByTitle(conn, query);
         // return res.status(200).json({ post, mypings });
 
@@ -53,11 +55,11 @@ export async function getResult(req, res, next) {
         ids = post.map((dt) => dt.id);
         allImages = await fileRepository.getByIds(conn, ids);
         allLikers = await likeRepository.getByIds(conn, ids);
-        post = post.map((post) => {
-          const Images = allImages.filter((img) => img.post === id);
-          const Likers = allLikers.filter((liker) => liker.post === id);
+        post = post.map((el) => {
+          const Images = allImages.filter((img) => img.post === el.id);
+          const Likers = allLikers.filter((liker) => liker.post === el.id);
           return {
-            ...post,
+            ...el,
             Images,
             Likers,
           };
