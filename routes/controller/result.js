@@ -8,8 +8,8 @@ export async function getResult(req, res, next) {
   try {
     let post, user, mypings, ids, allImages, allLikers, Images, Likers;
     switch (filter) {
-      case 'title':
-        post = await resultRepository.getPostByTitle(conn, query);
+      case 'post':
+        post = await resultRepository.getPostBySearch(conn, query);
         ids = post.map((dt) => dt.id);
         allImages = await fileRepository.getByIds(conn, ids);
         allLikers = await likeRepository.getByIds(conn, ids);
@@ -22,31 +22,31 @@ export async function getResult(req, res, next) {
             Likers,
           };
         });
-        mypings = await resultRepository.getMyPingsByTitle(conn, query);
-        return res.status(200).json({ post, mypings });
+        // mypings = await resultRepository.getMyPingsByTitle(conn, query);
+        // return res.status(200).json({ post, mypings });
 
-      case 'content':
-        post = await resultRepository.getPostByContent(conn, query);
-        ids = post.map((dt) => dt.id);
-        allImages = await fileRepository.getByIds(conn, ids);
-        allLikers = await likeRepository.getByIds(conn, ids);
-        post = post.map((post) => {
-          Images = allImages.filter((img) => img.post === id);
-          Likers = allLikers.filter((post) => post.id === id);
-          return {
-            ...post,
-            Images,
-            Likers,
-          };
-        });
+        // case 'content':
+        //   post = await resultRepository.getPostByContent(conn, query);
+        //   ids = post.map((dt) => dt.id);
+        //   allImages = await fileRepository.getByIds(conn, ids);
+        //   allLikers = await likeRepository.getByIds(conn, ids);
+        //   post = post.map((post) => {
+        //     Images = allImages.filter((img) => img.post === id);
+        //     Likers = allLikers.filter((post) => post.id === id);
+        //     return {
+        //       ...post,
+        //       Images,
+        //       Likers,
+        //     };
+        //   });
         return res.status(200).json({ post });
 
       case 'user':
         user = await resultRepository.getUserByNickname(conn, query);
         return res.status(200).json({ user });
 
-      case 'category':
-        mypings = await resultRepository.getMyPingsByCategory(conn, query);
+      case 'mypings':
+        mypings = await resultRepository.getMyPingsByTitle(conn, query);
         return res.status(200).json({ mypings });
 
       case 'hashtag':
