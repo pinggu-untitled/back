@@ -4,7 +4,6 @@ import { fileRepository, likeRepository, resultRepository } from '../data/index.
 export async function getResult(req, res, next) {
   const { search_query: query, filter } = req.query;
   const conn = await db.getConnection();
-  console.log(query, filter);
   try {
     let post, user, mypings, ids, allImages, allLikers, Images, Likers;
     switch (filter) {
@@ -14,8 +13,8 @@ export async function getResult(req, res, next) {
         allImages = await fileRepository.getByIds(conn, ids);
         allLikers = await likeRepository.getByIds(conn, ids);
         post = post.map((post) => {
-          Images = allImages.filter((img) => img.post === id);
-          Likers = allLikers.filter((post) => post.id === id);
+          const Images = allImages.filter((img) => img.post === id);
+          const Likers = allLikers.filter((liker) => liker.post === id);
           return {
             ...post,
             Images,
@@ -55,8 +54,8 @@ export async function getResult(req, res, next) {
         allImages = await fileRepository.getByIds(conn, ids);
         allLikers = await likeRepository.getByIds(conn, ids);
         post = post.map((post) => {
-          Images = allImages.filter((img) => img.post === id);
-          Likers = allLikers.filter((post) => post.id === id);
+          const Images = allImages.filter((img) => img.post === id);
+          const Likers = allLikers.filter((liker) => liker.post === id);
           return {
             ...post,
             Images,

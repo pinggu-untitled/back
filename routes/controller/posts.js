@@ -6,12 +6,13 @@ import logger from '../../config/logger.js';
 export async function getPosts(req, res, next) {
   const conn = await db.getConnection();
   // const userId = req.user.id;
-  const userId = 7;
+  const userId = 18;
   try {
     const data = await postRepository.getFollowing(conn, userId);
     const ids = data.map((dt) => dt.id);
     const allImages = await fileRepository.getByIds(conn, ids);
     const allLikers = await likeRepository.getByIds(conn, ids);
+    console.log(allLikers);
     const result = await Promise.all(
       data.map(
         async ({
@@ -29,7 +30,7 @@ export async function getPosts(req, res, next) {
           profile_image_url,
         }) => {
           const Images = allImages.filter((img) => img.post === id);
-          const Likers = allLikers.filter((post) => post.id === id);
+          const Likers = allLikers.filter((liker) => liker.post === id);
           return {
             id,
             title,
