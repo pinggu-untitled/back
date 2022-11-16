@@ -28,7 +28,7 @@ export async function getPosts(req, res, next) {
           profile_image_url,
         }) => {
           const Images = allImages.filter((img) => img.post === id);
-          const Likers = allLikers.filter((post => post.id === id));
+          const Likers = allLikers.filter((post) => post.id === id);
           return {
             id,
             title,
@@ -56,10 +56,7 @@ export async function getPosts(req, res, next) {
     const size = Number(req.query.size);
     const page = Number(req.query.page);
 
-    
-    return res.status(200).json(
-      result.slice(page * size, (page + 1) * size),
-    );
+    return res.status(200).json(result.slice(page * size, (page + 1) * size));
   } catch (err) {
     logger.error(`Server Error`);
     return res.status(500).json(err);
@@ -230,9 +227,10 @@ export async function getByBounds(req, res, next) {
         // );
         ids = result.map((dt) => dt.id);
         allImages = await fileRepository.getByIds(conn, ids);
+        console.log('xxxx');
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = allImages.filter(img => img.id === post.id);
+            post.Images = allImages.filter((img) => img.id === post.id);
             if (post.Images.length !== 0) {
               post.Images = [post.Images[0]];
             }
@@ -244,8 +242,8 @@ export async function getByBounds(req, res, next) {
               latitude: post.latitude,
               hits: post.hits,
               is_private: post.is_private,
-              created_at: transDate(post.created_at),
-              updated_at: transDate(post.updated_at),
+              created_at: post.created_at,
+              updated_at: post.updated_at,
               User: {
                 id: post.userId,
                 nickname: post.nickname,
@@ -263,7 +261,7 @@ export async function getByBounds(req, res, next) {
         allImages = await fileRepository.getByIds(conn, ids);
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = allImages.filter(img => img.id === post.id);
+            post.Images = allImages.filter((img) => img.id === post.id);
             if (post.Images.length !== 0) {
               post.Images = post.Images[0];
             }
@@ -275,8 +273,8 @@ export async function getByBounds(req, res, next) {
               latitude: post.latitude,
               hits: post.hits,
               is_private: post.is_private,
-              created_at: transDate(post.created_at),
-              updated_at: transDate(post.updated_at),
+              created_at: post.created_at,
+              updated_at: post.updated_at,
               User: {
                 id: post.userId,
                 nickname: post.nickname,
