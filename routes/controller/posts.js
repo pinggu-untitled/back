@@ -10,8 +10,8 @@ export async function getPosts(req, res, next) {
     const data = await postRepository.getFollowing(conn, userId);
     const ids = data.map((dt) => dt.id);
     const allImages = await fileRepository.getByIds(conn, ids);
+    console.log(allImages);
     const allLikers = await likeRepository.getByIds(conn, ids);
-    console.log(allLikers);
     const result = await Promise.all(
       data.map(
         async ({

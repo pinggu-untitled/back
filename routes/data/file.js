@@ -13,7 +13,7 @@ export async function getByIds(conn, ids) {
     }, [])
     .join(',');
   return conn
-    .execute(`SELECT md.id, md.src FROM MEDIA as md WHERE md.post in (${str})`, ids)
+    .execute(`SELECT md.id, md.post, md.src FROM MEDIA as md WHERE md.post in (${str})`, ids)
     .then((result) => result[0]);
 }
 
