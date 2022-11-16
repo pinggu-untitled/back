@@ -3,7 +3,7 @@ import Sequelize from 'sequelize';
 import db from '../../models/index.js';
 import { isAccessible } from '../middlewares/accessible.js';
 import { isPrivate } from '../middlewares/private.js';
-const { MyPings, SharePings, MyPingsPost, Post, User, Media, sequelize } = db;
+const { MyPings, SharePings, MyPingsPost, Post, User, Media, Liked, sequelize } = db;
 const { Op } = Sequelize;
 
 const router = express.Router();
@@ -37,7 +37,7 @@ router.get('/:mypingsId', isPrivate, (req, res) => {
 router.post('/:mypingsId/sharepings', (req, res) => {
   MyPings.findOne({ where: { id: req.params.mypingsId, is_private: 0 }, attributes: ['user'] })
     .then((userObj) => {
-      if (!userObj) throw new Error('해당 마이핑스에 접근할 수 없습니다.');
+      if (!userObj || userObj.dataValues?.user === req.user?.id) throw new Error('해당 마이핑스를 공유할 수 없습니다.');
       SharePings.create({
         host: userObj.dataValues?.user,
         guest: req.user?.id,
@@ -45,6 +45,24 @@ router.post('/:mypingsId/sharepings', (req, res) => {
       });
     })
     .then((result) => res.status(200).json({ message: 'success' }))
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'fail' });
+    });
+});
+
+/* 마이핑스 공유 취소하기 */
+router.delete('/:mypingsId/sharepings', (req, res) => {
+  SharePings.destroy({
+    where: {
+      guest: req.user.id,
+      mypings: req.params.mypingsId,
+    },
+  })
+    .then((result) => {
+      if (result) res.status(200).json({ message: 'success' });
+      else throw new Error('마이핑스가 존재하지 않습니다.');
+    })
     .catch((err) => {
       console.error(err);
       res.status(500).json({ message: 'fail' });
@@ -122,7 +140,7 @@ router.patch('/:mypingsId', isAccessible, async (req, res) => {
       /* MYPINGS_POST 테이블에 INSERT */
       if (Array.isArray(req.body.selPosts) && req.body.selPosts.length !== 0) {
         const mypingsPostData = req.body.selPosts.map((postId) => {
-          return { mypings: req.body.mypingsId, post: postId };
+          return { mypings: req.params.mypingsId, post: postId };
         });
         await MyPingsPost.bulkCreate(mypingsPostData, { transaction });
       }
@@ -146,6 +164,17 @@ router.get('/:mypingsId/posts', (req, res) => {
     .then((postIdArray) =>
       Post.findAll({
         include: [
+          {
+            model: Liked,
+            as: 'Likers',
+            include: [
+              {
+                model: User,
+                attributes: ['id', 'nickname', 'profile_image_url'],
+              },
+            ],
+            attributes: ['id'],
+          },
           {
             model: Media,
             as: 'Images',
@@ -274,7 +303,6 @@ router.delete('/:mypingsId', isAccessible, async (req, res) => {
       await MyPingsPost.destroy({
         where: {
           mypings: req.params.mypingsId,
-          user: req.user?.id,
         },
         transaction,
       });
@@ -283,7 +311,7 @@ router.delete('/:mypingsId', isAccessible, async (req, res) => {
       await SharePings.destroy({
         where: {
           mypings: req.params.mypingsId,
-          user: req.user?.id,
+          host: req.user?.id,
         },
         transaction,
       });

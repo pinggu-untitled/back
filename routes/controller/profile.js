@@ -56,6 +56,5 @@ export async function updateProfileInfo(req, res, next) {
 }
 
 export async function updateProfileImage(req, res, next) {
-  console.log('hello@@1111');
   return res.status(200).json(req.file.filename);
 }

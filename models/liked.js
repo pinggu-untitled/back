@@ -30,5 +30,10 @@ export default (sequelize, DataTypes) => {
     },
   );
 
+  Liked.associate = (db) => {
+    db.Liked.belongsTo(db.User, { foreignKey: 'user', targetKey: 'id' });
+    db.Liked.belongsTo(db.Post, { foreignKey: 'post', targetKey: 'id' });
+  };
+
   return Liked;
 };

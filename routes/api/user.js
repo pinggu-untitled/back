@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import Sequelize from 'sequelize';
+import url from 'url';
 import db from '../../models/index.js';
-const { User, Post, Media, MyPings, SharePings, sequelize } = db;
+import { isLoggedIn } from '../middlewares/login.js';
+const { User, Post, Media, MyPings, SharePings, Liked, sequelize } = db;
 const { QueryTypes } = sequelize;
 const { Op } = Sequelize;
 
@@ -11,11 +13,11 @@ const router = Router();
 router.get('/me', (req, res) => {
   if (req.user?.id) {
     res.status(200).json(req.session.passport.user);
-  } else res.status(500).json(null);
+  } else res.status(200).json(null);
 });
 
 /* 모든 사용자 정보 가져오기 */
-router.get('/all', (req, res) => {
+router.get('/all', isLoggedIn, (req, res) => {
   User.findAll({ attributes: ['id', 'nickname', 'profile_image_url'] })
     .then((users) => res.status(200).json(users))
     .catch((err) => {
@@ -25,7 +27,7 @@ router.get('/all', (req, res) => {
 });
 
 /* 사용자 정보 가져오기 */
-router.get('/:userId', (req, res) => {
+router.get('/:userId', isLoggedIn, (req, res) => {
   User.findOne({
     where: { id: req.params.userId },
     attributes: ['id', 'nickname', 'bio', 'profile_image_url'],
@@ -40,7 +42,7 @@ router.get('/:userId', (req, res) => {
 });
 
 /* 팔로워 목록 가져오기 */
-router.get('/:userId/followers', (req, res) => {
+router.get('/:userId/followers', isLoggedIn, (req, res) => {
   const query =
     'SELECT USER.id, USER.nickname, USER.profile_image_url FROM USER INNER JOIN FOLLOW ON (FOLLOW.host=USER.id) WHERE FOLLOW.follow=:userId';
   sequelize
@@ -56,7 +58,7 @@ router.get('/:userId/followers', (req, res) => {
 });
 
 /* 팔로잉 목록 가져오기 */
-router.get('/:userId/followings', (req, res) => {
+router.get('/:userId/followings', isLoggedIn, (req, res) => {
   const query =
     'SELECT USER.id, USER.nickname, USER.profile_image_url FROM USER INNER JOIN FOLLOW ON (FOLLOW.follow=USER.id) WHERE FOLLOW.host=?';
   sequelize
@@ -72,7 +74,7 @@ router.get('/:userId/followings', (req, res) => {
 });
 
 /* 사용자의 마이핑스 전체 목록 가져오기 */
-router.get('/:userId/mypings', (req, res) => {
+router.get('/:userId/mypings', isLoggedIn, (req, res) => {
   MyPings.findAll({
     include: [
       {
@@ -95,7 +97,7 @@ router.get('/:userId/mypings', (req, res) => {
 });
 
 /* 공유된 마이핑스 가져오기 */
-router.get('/:userId/sharepings', (req, res) => {
+router.get('/:userId/sharepings', isLoggedIn, (req, res) => {
   SharePings.findAll({ where: { guest: req.params.userId }, attributes: ['mypings'] })
     .then((sharedArray) => sharedArray.map((sharedObj) => sharedObj.mypings))
     .then((sharedIdArray) =>
@@ -120,17 +122,28 @@ router.get('/:userId/sharepings', (req, res) => {
 });
 
 /* 내 혹은 유저의 포스트 전체 목록 가져오기  */
-router.get('/:userId/posts', (req, res) => {
+router.get('/:userId/posts', isLoggedIn, (req, res) => {
   Post.findAll({
     include: [
+      {
+        model: User,
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
       {
         model: Media,
         as: 'Images',
         attributes: ['id', 'src'],
       },
       {
-        model: User,
-        attributes: ['id', 'nickname', 'profile_image_url'],
+        model: Liked,
+        include: [
+          {
+            model: User,
+            attributes: ['id', 'nickname', 'profile_image_url'],
+          },
+        ],
+        as: 'Likers',
+        attributes: ['id'],
       },
     ],
     attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
@@ -140,6 +153,45 @@ router.get('/:userId/posts', (req, res) => {
     .then((posts) => res.status(200).json(posts))
     .catch((err) => {
       console.log(err);
+      res.status(500).json({ message: 'fail' });
+    });
+});
+
+/* Test - 지도 범위 내 포스트 가져오기 */
+router.get('/posts/bounds', isLoggedIn, (req, res) => {
+  const {
+    query: { swLat, swLng, neLat, neLng },
+  } = url.parse(req.originalUrl, true);
+  console.log('#####################');
+  console.log(swLat, swLng, neLat, neLng);
+  console.log('swLng >> ', swLng, typeof swLng);
+
+  Post.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'nickname', 'profile_image_url'],
+      },
+      {
+        model: Media,
+        as: 'Images',
+        attributes: ['id', 'src'],
+      },
+    ],
+    where: {
+      latitude: {
+        [Op.between]: [swLat, neLat],
+      },
+      longitude: {
+        [Op.between]: [swLng, neLng],
+      },
+      [Op.or]: [{ user: req.user.id }, { is_private: 0 }],
+    },
+    attributes: ['id', 'created_at', 'updated_at', 'title', 'content', 'latitude', 'longitude', 'hits', 'is_private'],
+  })
+    .then((posts) => res.status(200).json(posts))
+    .catch((err) => {
+      console.error(err);
       res.status(500).json({ message: 'fail' });
     });
 });

@@ -57,10 +57,11 @@ export default (sequelize, DataTypes) => {
   User.associate = (db) => {
     db.User.hasMany(db.Post, { foreignKey: 'user' });
     db.User.hasMany(db.Comment, { foreignKey: 'user' });
-    db.User.belongsToMany(db.Post, {
-      through: db.Liked,
-      foreignKey: 'user',
-    });
+    // db.User.belongsToMany(db.Post, {
+    //   through: db.Liked,
+    //   foreignKey: 'user',
+    // });
+    db.User.hasMany(db.Liked, { foreignKey: 'user', sourceKey: 'id' });
     db.User.belongsToMany(db.User, {
       through: db.Follow,
       as: 'Followers',

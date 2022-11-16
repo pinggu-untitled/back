@@ -56,11 +56,12 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'post',
     });
     db.Post.hasMany(db.Mention, { foreignKey: 'post' });
-    db.Post.belongsToMany(db.User, {
-      through: db.Liked,
-      as: 'Likers',
-      foreignKey: 'post',
-    });
+    // db.Post.belongsToMany(db.User, {
+    //   through: db.Liked,
+    //   as: 'Likers',
+    //   foreignKey: 'post',
+    // });
+    db.Post.hasMany(db.Liked, { foreignKey: 'post', as: 'Likers', sourceKey: 'id' });
     db.Post.belongsToMany(db.MyPings, {
       through: db.MyPingsPost,
       foreignKey: 'post',

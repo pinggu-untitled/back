@@ -31,33 +31,30 @@ export function makeFolderScheduler() {
   });
 }
 
-// TODO 1. src 파일 찾아서 삭제,
-// TODO 2. 삭제 완료 후 db에서 media row 삭제
-export async function deleteImageScheduler() {
-  // cron.schedule('0 0 0 * * *', async () => {
-  console.log('이미지 삭제 스케줄러 실행!');
-  const conn = await db.getConnection();
-  try {
-    const imagesPath = await conn
-      .execute('SELECT md.id, md.src from MEDIA as md where md.post is null or md.user is null')
-      .then((res) => res[0]);
-    console.log(imagesPath);
+export function deleteImageScheduler() {
+  cron.schedule('0 0 0 * * *', async () => {
+    console.log('이미지 삭제 스케줄러 실행!');
+    const conn = await db.getConnection();
+    try {
+      const imagesPath = await conn
+        .execute('SELECT md.id, md.src from MEDIA as md where md.post is null or md.user is null')
+        .then((res) => res[0]);
+      console.log(imagesPath);
 
-    for await (const image of imagesPath) {
-      try {
-        console.log('hello@@@@@@@@@@@@@@');
-        await fsp.unlink(`./uploads/images/${image.src}`);
-        console.log('삭제되었습니다.');
+      for await (const image of imagesPath) {
+        try {
+          await fsp.unlink(`./uploads/images/${image.src}`);
+          console.log(`[Image Scheduler] uploads/images/${image.src} 이미지가 삭제되었습니다.`);
 
-        await conn.execute('delete from MEDIA as md where md.id = ?', [image.id]);
-      } catch (err) {
-        console.error('에러');
+          await conn.execute('delete from MEDIA as md where md.id = ?', [image.id]);
+        } catch (err) {
+          console.error(err);
+        }
       }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      conn.release();
     }
-  } catch (error) {
-    console.log(error);
-  } finally {
-    conn.release();
-  }
-  // });
+  });
 }
