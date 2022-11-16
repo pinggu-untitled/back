@@ -13,7 +13,8 @@ router.get(
   }),
   (req, res) => {
     // res.redirect('https://localhost');
-    res.redirect('http://localhost:3000');
+    // res.redirect('http://localhost:3000');
+    res.redirect('https://pinggu.life');
   },
 );
 
@@ -32,7 +33,8 @@ router.get(
   }),
   (req, res) => {
     // res.redirect('https://localhost');
-    res.redirect('http://localhost:3000');
+    // res.redirect('http://localhost:3000');
+    res.redirect('https://pinggu.life');
   },
 );
 
@@ -48,7 +50,8 @@ router.get('/logout', (req, res) => {
       if (err) return next(err);
       req.session.destroy();
       // res.redirect('https://localhost');
-      res.redirect('http://localhost:3000');
+      // res.redirect('http://localhost:3000');
+      res.redirect('https://pinggu.life');
     });
   }
 });
@@ -58,7 +61,8 @@ router.get('/logout/kakao/callback', (req, res) => {
     if (err) return next(err);
     req.session.destroy();
     // res.redirect('https://localhost');
-    res.redirect('http://localhost:3000');
+    // res.redirect('http://localhost:3000');
+    res.redirect('https://pinggu.life');
   });
 });
 

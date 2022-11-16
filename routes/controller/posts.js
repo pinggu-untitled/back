@@ -50,9 +50,7 @@ export async function getAllTest(req, res, next) {
 
 // 팔로우 한 사람들 게시물 모두 가져오기
 export async function getPosts(req, res, next) {
-  console.time('xxx');
   const conn = await db.getConnection();
-  console.timeLog('xxx');
   const userId = req.user.id;
   // const userId = 7;
   try {
@@ -78,7 +76,7 @@ export async function getPosts(req, res, next) {
         }) => {
           // const Images = await fileRepository.getAll(conn, id);
           const Images = allImages.filter((img) => img.post === id);
-          const Likers = allLikers.filter((post => post.id === id));
+          const Likers = allLikers.filter((post) => post.id === id);
           return {
             id,
             title,
@@ -308,7 +306,7 @@ export async function getByBounds(req, res, next) {
         allImages = await fileRepository.getByIds(conn, ids);
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = allImages.filter(img => img.id === post.id);
+            post.Images = allImages.filter((img) => img.id === post.id);
             if (post.Images.length !== 0) {
               post.Images = [post.Images[0]];
             }
@@ -339,7 +337,7 @@ export async function getByBounds(req, res, next) {
         allImages = await fileRepository.getByIds(conn, ids);
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = allImages.filter(img => img.id === post.id);
+            post.Images = allImages.filter((img) => img.id === post.id);
             if (post.Images.length !== 0) {
               post.Images = post.Images[0];
             }
