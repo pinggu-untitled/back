@@ -1,41 +1,44 @@
 import { db } from '../../config/mysql.js';
-import { resultRepository } from '../data/index.js';
+import { fileRepository, likeRepository, resultRepository } from '../data/index.js';
 
 export async function getResult(req, res, next) {
   const { search_query: query, filter } = req.query;
   const conn = await db.getConnection();
+  console.log(query, filter);
   try {
-    let post, user, mypings;
+    let post, user, mypings, ids, allImages, allLikers, Images, Likers;
     switch (filter) {
       case 'title':
         post = await resultRepository.getPostByTitle(conn, query);
-        post = await Promise.all(
-          post.map(async (post) => {
-            const Images = await fileRepository.getAll(conn, id);
-            const Likers = await likeRepository.getAll(conn, id);
-            return {
-              ...post,
-              Images,
-              Likers,
-            };
-          }),
-        );
+        ids = post.map((dt) => dt.id);
+        allImages = await fileRepository.getByIds(conn, ids);
+        allLikers = await likeRepository.getByIds(conn, ids);
+        post = post.map((post) => {
+          Images = allImages.filter((img) => img.post === id);
+          Likers = allLikers.filter((post) => post.id === id);
+          return {
+            ...post,
+            Images,
+            Likers,
+          };
+        });
         mypings = await resultRepository.getMyPingsByTitle(conn, query);
         return res.status(200).json({ post, mypings });
 
       case 'content':
         post = await resultRepository.getPostByContent(conn, query);
-        post = await Promise.all(
-          post.map(async (post) => {
-            const Images = await fileRepository.getAll(conn, id);
-            const Likers = await likeRepository.getAll(conn, id);
-            return {
-              ...post,
-              Images,
-              Likers,
-            };
-          }),
-        );
+        ids = post.map((dt) => dt.id);
+        allImages = await fileRepository.getByIds(conn, ids);
+        allLikers = await likeRepository.getByIds(conn, ids);
+        post = post.map((post) => {
+          Images = allImages.filter((img) => img.post === id);
+          Likers = allLikers.filter((post) => post.id === id);
+          return {
+            ...post,
+            Images,
+            Likers,
+          };
+        });
         return res.status(200).json({ post });
 
       case 'user':
@@ -48,17 +51,18 @@ export async function getResult(req, res, next) {
 
       case 'hashtag':
         post = await resultRepository.getPostByHashtag(conn, query);
-        post = await Promise.all(
-          post.map(async (post) => {
-            const Images = await fileRepository.getAll(conn, id);
-            const Likers = await likeRepository.getAll(conn, id);
-            return {
-              ...post,
-              Images,
-              Likers,
-            };
-          }),
-        );
+        ids = post.map((dt) => dt.id);
+        allImages = await fileRepository.getByIds(conn, ids);
+        allLikers = await likeRepository.getByIds(conn, ids);
+        post = post.map((post) => {
+          Images = allImages.filter((img) => img.post === id);
+          Likers = allLikers.filter((post) => post.id === id);
+          return {
+            ...post,
+            Images,
+            Likers,
+          };
+        });
         return res.status(200).json({ post });
       default:
         throw new Error('Invalid filter!');

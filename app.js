@@ -38,7 +38,7 @@ if (prod) {
 } else {
   app.use(
     cors({
-      origin: 'http://localhost:3000',
+      origin: ['http://localhost:3000', 'https//pinggu.life'],
       credentials: true,
     }),
   );
