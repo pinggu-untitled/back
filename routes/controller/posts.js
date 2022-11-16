@@ -284,15 +284,6 @@ export async function getByBounds(req, res, next) {
     switch (tab) {
       case 'home':
         result = await postRepository.getByBoundsInHome(conn, userId, swLat, neLat, swLng, neLng);
-        // result = await Promise.all(
-        //   result.map(async (post) => {
-        //     post.Images = await fileRepository.getAll(conn, post.id);
-        //     if (post.Images.length !== 0) {
-        //       post.Images = post.Images[0];
-        //     }
-        //     return post;
-        //   }),
-        // );
         result = await Promise.all(
           result.map(async (post) => {
             post.Images = await fileRepository.getAll(conn, post.id);
@@ -320,7 +311,6 @@ export async function getByBounds(req, res, next) {
         );
         return res.status(200).json(result);
 
-      //TODO 탐색탭
       case 'explore':
         result = await postRepository.getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, filter, keyword);
         result = await Promise.all(
