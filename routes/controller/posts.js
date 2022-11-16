@@ -52,8 +52,6 @@ export async function getPosts(req, res, next) {
       ),
     );
 
-    console.timeEnd('xxx');
-
     const size = Number(req.query.size);
     const page = Number(req.query.page);
 
