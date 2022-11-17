@@ -16,8 +16,6 @@ export const isPrivate = async (req, res, next) => {
         attributes,
       });
     }
-    console.log('result >> ', result);
-    console.log('req.params >>> ', req.params);
     if (result?.is_private && result.user !== req.user.id) throw new Error('비공개 컨텐츠');
     next();
   } catch (err) {
