@@ -6,15 +6,19 @@ export async function getAll(conn, postId) {
 }
 
 export async function getByIds(conn, ids) {
+  console.log(ids);
   const str = ids
     .reduce((sum) => {
       sum.push('?');
       return sum;
     }, [])
     .join(',');
-  return conn
-    .execute(`SELECT md.id, md.post, md.src FROM MEDIA as md WHERE md.post in (${str})`, ids)
-    .then((result) => result[0]);
+
+  return ids.length
+    ? conn
+        .execute(`SELECT md.id, md.post, md.src FROM MEDIA as md WHERE md.post in (${str})`, ids)
+        .then((result) => result[0])
+    : [];
 }
 
 export async function create(conn, userId, file, postId) {

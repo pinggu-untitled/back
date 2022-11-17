@@ -5,12 +5,14 @@ export async function getByIds(conn, ids) {
       return sum;
     }, [])
     .join(',');
-  return conn
-    .execute(
-      `SELECT li.user as id, li.post as post, us.nickname, us.profile_image_url FROM LIKED as li join USER as us on li.user = us.id WHERE li.post in (${str}) ORDER BY li.created_at`,
-      ids,
-    )
-    .then((result) => result[0]);
+  return ids.length
+    ? conn
+        .execute(
+          `SELECT li.user as id, li.post as post, us.nickname, us.profile_image_url FROM LIKED as li join USER as us on li.user = us.id WHERE li.post in (${str}) ORDER BY li.created_at`,
+          ids,
+        )
+        .then((result) => result[0])
+    : [];
 }
 export async function getAll(conn, postId) {
   return conn
