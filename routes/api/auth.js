@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { PINGGU_HOST } from process.env;
+const { PINGGU_HOST } = process.env;
 
 const router = Router();
 
