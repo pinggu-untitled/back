@@ -135,7 +135,6 @@ export async function getPost(req, res, next) {
 export async function createPost(req, res, next) {
   const { title, content, longitude, latitude, is_private, mentions, hashtags, images } = req.body;
   const userId = req.user.id;
-  // const userId = 19;
   const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
   try {
@@ -168,7 +167,6 @@ export async function updatePost(req, res, next) {
   const { title, content, longitude, latitude, is_private, mentions, hashtags, images } = req.body;
   // const userId = req.user.id;
   const userId = req.user.id;
-  // const userId = 19;
   const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
   try {
@@ -232,7 +230,7 @@ export async function getByBounds(req, res, next) {
         console.log('xxxx');
         result = await Promise.all(
           result.map(async (post) => {
-            post.Images = allImages.filter((img) => img.id === post.id);
+            post.Images = allImages.filter((img) => img.post === post.id);
             if (post.Images.length !== 0) {
               post.Images = [post.Images[0]];
             }
@@ -258,14 +256,15 @@ export async function getByBounds(req, res, next) {
         return res.status(200).json(result);
 
       case 'explore':
-        console.log('FILTER >>>> ', filter);
-        console.log('KEYWORD >>>> ', keyword);
+        console.log('FILTER >>>> ', filter); // post
+        console.log('KEYWORD >>>> ', keyword); // keyword
         result = await postRepository.getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, filter, keyword);
         console.log('RESULT >>>>> ', result); // error: invalid filter ?
         ids = result.map((dt) => dt.id);
+        console.log('IDS >>> ', ids);
         allImages = await fileRepository.getByIds(conn, ids);
         result = result.map(async (post) => {
-          post.Images = allImages.filter((img) => img.id === post.id);
+          post.Images = allImages.filter((img) => img.post === post.id);
           if (post.Images.length !== 0) {
             post.Images = post.Images[0];
           }
