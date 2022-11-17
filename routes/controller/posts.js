@@ -208,8 +208,8 @@ export async function removePost(req, res, next) {
 export async function getByBounds(req, res, next) {
   const { swLat, swLng, neLat, neLng, tab, filter, keyword } = req.query;
   const conn = await db.getConnection();
-  // const userId = req.user.id;
-  const userId = 7;
+  const userId = req.user.id;
+  // const userId = 7;
   try {
     let result;
     let ids;
@@ -264,7 +264,8 @@ export async function getByBounds(req, res, next) {
         ids = result.map((dt) => dt.id);
         console.log('IDS >>> ', ids);
         allImages = await fileRepository.getByIds(conn, ids);
-        result = result.map(async (post) => {
+        console.log('ALLIMAGES >>> ', allImages);
+        result = result.map((post) => {
           post.Images = allImages.filter((img) => img.post === post.id);
           if (post.Images.length !== 0) {
             post.Images = post.Images[0];
@@ -287,6 +288,7 @@ export async function getByBounds(req, res, next) {
             Images: post.Images,
           };
         });
+        console.log('RESULT2 >>> ', result);
         return res.status(200).json(result);
       default:
         return res.status(403).json({ message: 'invalid tab' });
