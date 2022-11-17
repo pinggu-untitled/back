@@ -208,7 +208,8 @@ export async function removePost(req, res, next) {
 export async function getByBounds(req, res, next) {
   const { swLat, swLng, neLat, neLng, tab, filter, keyword } = req.query;
   const conn = await db.getConnection();
-  const userId = req.user.id;
+  // const userId = req.user.id;
+  const userId = 7;
   try {
     let result;
     let ids;
