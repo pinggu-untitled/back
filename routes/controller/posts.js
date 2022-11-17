@@ -28,7 +28,7 @@ export async function getPosts(req, res, next) {
           profile_image_url,
         }) => {
           const Images = allImages.filter((img) => img.post === id);
-          const Likers = allLikers.filter((liker) => liker.post === id);
+          const Likers = allLikers.filter((post) => post.id === id);
           return {
             id,
             title,
@@ -50,6 +50,8 @@ export async function getPosts(req, res, next) {
         },
       ),
     );
+
+    console.timeEnd('xxx');
 
     const size = Number(req.query.size);
     const page = Number(req.query.page);
@@ -225,6 +227,7 @@ export async function getByBounds(req, res, next) {
         // );
         ids = result.map((dt) => dt.id);
         allImages = await fileRepository.getByIds(conn, ids);
+        console.log('xxxx');
         result = await Promise.all(
           result.map(async (post) => {
             post.Images = allImages.filter((img) => img.id === post.id);
@@ -253,34 +256,35 @@ export async function getByBounds(req, res, next) {
         return res.status(200).json(result);
 
       case 'explore':
+        console.log('FILTER >>>> ', filter);
+        console.log('KEYWORD >>>> ', keyword);
         result = await postRepository.getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, filter, keyword);
+        console.log('RESULT >>>>> ', result); // error: invalid filter ?
         ids = result.map((dt) => dt.id);
         allImages = await fileRepository.getByIds(conn, ids);
-        result = await Promise.all(
-          result.map(async (post) => {
-            post.Images = allImages.filter((img) => img.id === post.id);
-            if (post.Images.length !== 0) {
-              post.Images = post.Images[0];
-            }
-            return {
-              id: post.id,
-              title: post.title,
-              content: post.content,
-              longitude: post.longitude,
-              latitude: post.latitude,
-              hits: post.hits,
-              is_private: post.is_private,
-              created_at: post.created_at,
-              updated_at: post.updated_at,
-              User: {
-                id: post.userId,
-                nickname: post.nickname,
-                profile_image_url: post.profile_image_url,
-              },
-              Images: post.Images,
-            };
-          }),
-        );
+        result = result.map(async (post) => {
+          post.Images = allImages.filter((img) => img.id === post.id);
+          if (post.Images.length !== 0) {
+            post.Images = post.Images[0];
+          }
+          return {
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            longitude: post.longitude,
+            latitude: post.latitude,
+            hits: post.hits,
+            is_private: post.is_private,
+            created_at: post.created_at,
+            updated_at: post.updated_at,
+            User: {
+              id: post.userId,
+              nickname: post.nickname,
+              profile_image_url: post.profile_image_url,
+            },
+            Images: post.Images,
+          };
+        });
         return res.status(200).json(result);
       default:
         return res.status(403).json({ message: 'invalid tab' });
