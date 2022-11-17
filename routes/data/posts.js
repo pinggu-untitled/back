@@ -76,6 +76,7 @@ export async function create(conn, userId, post, mentions, hashtags, images) {
 
 // 특정 게시물 수정
 export async function update(conn, userId, postId, post, mentions, hashtags, images) {
+  console.log('@@@@@@@@11111@@@@@', images);
   const updatePost = await conn
     .execute(`UPDATE POST SET title = ?, content = ?, longitude = ?, latitude = ?, is_private = ? WHERE id = ?`, [
       post.title,
@@ -87,7 +88,7 @@ export async function update(conn, userId, postId, post, mentions, hashtags, ima
     ])
     .then((result) => getById(conn, postId))
     .catch(console.error);
-
+  console.log('@@@@@@@2222222@@@@@@', images);
   await conn.execute(`DELETE FROM MENTION WHERE MENTION.post = ?`, [Number(postId)]);
   await conn.execute('DELETE FROM POSTHASH WHERE post = ?', [Number(postId)]);
 
@@ -119,6 +120,7 @@ export async function update(conn, userId, postId, post, mentions, hashtags, ima
       ]);
     }
   }
+  console.log('@@@@@@@@@@@@@', images);
   if (images?.length !== 0) {
     await conn.execute('UPDATE MEDIA as md SET md.post = null WHERE md.post = ?', [postId]);
     images?.map(async (image) => {
@@ -190,20 +192,20 @@ export async function getByBoundsInHome(conn, userId, swLat, neLat, swLng, neLng
 
 export async function getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, filter, keyword) {
   switch (filter) {
-    case 'title':
+    case 'post':
       return conn
         .execute(
-          `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as ps join USER as us on ps.user = us.id WHERE ps.title like '%${keyword}%' and (ps.latitude between ? and ?) and (ps.longitude between ? and ?)`,
+          `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as ps join USER as us on ps.user = us.id WHERE ps.title like '%${keyword}%' or ps.content like '%${keyword}%' and (ps.latitude between ? and ?) and (ps.longitude between ? and ?)`,
           [swLat, neLat, swLng, neLng],
         )
         .then((result) => result[0]);
-    case 'content':
-      return conn
-        .execute(
-          `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as ps join USER as us on ps.user = us.id WHERE ps.content like '%${keyword}%' and (ps.latitude between ? and ?) and (ps.longitude between ? and ?)`,
-          [swLat, neLat, swLng, neLng],
-        )
-        .then((result) => result[0]);
+    // case 'content':
+    //   return conn
+    //     .execute(
+    //       `SELECT ps.id, ps.title, ps.content, ps.longitude, ps.latitude, ps.hits, ps.is_private, ps.created_at, ps.updated_at, us.id as userId, us.nickname, us.profile_image_url FROM POST as ps join USER as us on ps.user = us.id WHERE ps.content like '%${keyword}%' and (ps.latitude between ? and ?) and (ps.longitude between ? and ?)`,
+    //       [swLat, neLat, swLng, neLng],
+    //     )
+    //     .then((result) => result[0]);
     case 'hashtag':
       return conn
         .execute(

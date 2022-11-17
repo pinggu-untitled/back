@@ -135,6 +135,7 @@ export async function getPost(req, res, next) {
 export async function createPost(req, res, next) {
   const { title, content, longitude, latitude, is_private, mentions, hashtags, images } = req.body;
   const userId = req.user.id;
+  // const userId = 19;
   const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
   try {
@@ -167,6 +168,7 @@ export async function updatePost(req, res, next) {
   const { title, content, longitude, latitude, is_private, mentions, hashtags, images } = req.body;
   // const userId = req.user.id;
   const userId = req.user.id;
+  // const userId = 19;
   const post = { title, content, longitude, latitude, is_private };
   const conn = await db.getConnection();
   try {
