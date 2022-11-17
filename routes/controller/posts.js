@@ -257,14 +257,9 @@ export async function getByBounds(req, res, next) {
         return res.status(200).json(result);
 
       case 'explore':
-        console.log('FILTER >>>> ', filter); // post
-        console.log('KEYWORD >>>> ', keyword); // keyword
         result = await postRepository.getByBoundsInExplore(conn, swLat, neLat, swLng, neLng, filter, keyword);
-        console.log('RESULT >>>>> ', result); // error: invalid filter ?
         ids = result.map((dt) => dt.id);
-        console.log('IDS >>> ', ids);
         allImages = await fileRepository.getByIds(conn, ids);
-        console.log('ALLIMAGES >>> ', allImages);
         result = result.map((post) => {
           post.Images = allImages.filter((img) => img.post === post.id);
           if (post.Images.length !== 0) {
@@ -288,7 +283,6 @@ export async function getByBounds(req, res, next) {
             Images: post.Images,
           };
         });
-        console.log('RESULT2 >>> ', result);
         return res.status(200).json(result);
       default:
         return res.status(403).json({ message: 'invalid tab' });
